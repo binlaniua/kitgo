@@ -4,6 +4,8 @@ import (
 	"os"
 	"github.com/binlaniua/kitgo/config"
 	"io/ioutil"
+	"bufio"
+	"io"
 )
 
 func ReadBytes(filePath string) ([]byte, bool) {
@@ -30,7 +32,21 @@ func ReadString(filePath string) (string, bool) {
 	}
 }
 
-func ReadStringIE(filePath string) string  {
-	r, _ := ReadString(filePath)
-	return r
+func ReadLines(filePath string) ([]string, bool) {
+	f, err := os.Open(filePath)
+	if err != nil {
+		config.Log(filePath, " 打开错误 =>", err)
+		return nil, false
+	}
+	defer f.Close()
+	rd := bufio.NewReader(f)
+	r := make([]string, 0)
+	for {
+		line, err := rd.ReadString('\n')
+		if err != nil || io.EOF == err {
+			break
+		}
+		r = append(r, line[:len(line) - 1])
+	}
+	return r, true
 }

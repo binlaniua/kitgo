@@ -7,9 +7,13 @@ var (
 )
 
 func Log(args ... interface{}) {
-	log.Println(args)
+	if Debug {
+		log.Println(args)
+	}
 }
 
 func LogF(f string, args ... interface{}) {
-	log.Panicf(f, args...)
+	if Debug {
+		log.Panicf(f, args...)
+	}
 }
