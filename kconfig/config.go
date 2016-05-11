@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	Debug = false
+	Debug = true
 )
 //-------------------------------------
 //

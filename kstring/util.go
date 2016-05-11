@@ -2,10 +2,8 @@ package kstring
 
 import (
 	"strings"
-	"log"
 	"regexp"
-	"net/url"
-	"github.com/binlaniua/kitgo/config"
+	"github.com/binlaniua/kitgo/kconfig"
 )
 
 //-------------------------------------
@@ -48,11 +46,11 @@ func Between(src string, start string, end string) (string, bool) {
 		if eI > 0 {
 			return src[:eI], true
 		} else {
-			config.Log(src, "开始位置[", end, "]没有找到")
+			kconfig.Log(src, "开始位置[", end, "]没有找到")
 			return src, false
 		}
 	} else {
-		config.Log(src, "开始位置[", start, "]没有找到")
+		kconfig.Log(src, "开始位置[", start, "]没有找到")
 		return "", false
 	}
 }
@@ -106,10 +104,10 @@ func Before(src string, start string) string {
 func Match(src string, p string, group int) string {
 	pattern, err := regexp.Compile(p)
 	if err != nil {
-		log.Println("构建正则出错 =>", p)
+		kconfig.Log("构建正则出错 =>", p)
 		return ""
 	} else {
-		r := pattern.FindSubmatch(src)
+		r := pattern.FindStringSubmatch(src)
 		if len(r) > group {
 			return r[group]
 		} else {
@@ -137,10 +135,3 @@ func LeftPad(src string, length int, pad string) string {
 // 
 //
 //-------------------------------------
-func UrlEncoded(str string) string {
-	u, err := url.Parse(str)
-	if err != nil {
-		return ""
-	}
-	return u.()
-}

@@ -1,3 +1,9 @@
+# 依赖
+```
+go get github.com/tealeg/xlsx
+go get github.com/extrame/xls
+```
+
 ## kfile 文件
 
 ## khttp http请求
