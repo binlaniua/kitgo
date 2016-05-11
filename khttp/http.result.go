@@ -101,3 +101,12 @@ func (hr *HttpResult) ToQuery() *goquery.Document {
 func (hr *HttpResult) ToFile(filePath string) bool {
 	return kfile.WriteBytes(filePath, hr.Body)
 }
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func (hr *HttpResult) IsEmpty() bool {
+	return len(hr.Body) == 0
+}

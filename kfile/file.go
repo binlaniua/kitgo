@@ -23,12 +23,13 @@ func RuntimePath() string {
 //
 //
 //-------------------------------------
-func RenameTo(filePath string, newName string) bool {
+func RenameTo(filePath string, newName string) (string, bool) {
 	dir := filepath.Dir(filePath)
-	err := os.Rename(filePath, dir + "/" + newName)
+	newPath := dir + "/" + newName
+	err := os.Rename(filePath, newPath)
 	if err != nil {
 		kconfig.Log(filePath, " 重命名失败 => ", err)
-		return false
+		return "", false
 	}
-	return true
+	return newPath, true
 }

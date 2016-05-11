@@ -7,6 +7,11 @@ import (
 var (
 	Debug = true
 )
+
+func init() {
+	log.SetFlags(log.Lshortfile)
+}
+
 //-------------------------------------
 //
 //
