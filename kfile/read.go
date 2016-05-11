@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"bufio"
 	"io"
+	"encoding/json"
 )
 
 //-------------------------------------
@@ -64,4 +65,31 @@ func ReadLines(filePath string) ([]string, bool) {
 		r = append(r, line[:len(line) - 1])
 	}
 	return r, true
+}
+
+//-------------------------------------
+//
+//  读取Json文件
+//
+//-------------------------------------
+func LoadJsonFile(filePath string, obj interface{}) bool {
+	data, ok := ReadBytes(filePath)
+	if !ok {
+		return false
+	}
+	err := json.Unmarshal(data, obj)
+	if err != nil {
+		kconfig.Log(filePath, "加载失败 => ", err)
+		return false
+	}
+	return true
+}
+
+//-------------------------------------
+//
+//  读取配置文件
+//
+//-------------------------------------
+func LoadProperties(filePath string) bool {
+	return false
 }

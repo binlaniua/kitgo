@@ -8,6 +8,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"log"
 	"bytes"
+	"github.com/binlaniua/kitgo/kfile"
 )
 
 type HttpResult struct {
@@ -16,6 +17,11 @@ type HttpResult struct {
 	Origin *http.Response
 }
 
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
 func NewHttpResult(res *http.Response) *HttpResult {
 	defer res.Body.Close()
 	bytes, err := ioutil.ReadAll(res.Body)
@@ -26,6 +32,11 @@ func NewHttpResult(res *http.Response) *HttpResult {
 	return r
 }
 
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
 func (hr *HttpResult) ToJson(data interface{}) bool {
 	err := json.Unmarshal(hr.Body, data)
 	if err != nil {
@@ -35,6 +46,11 @@ func (hr *HttpResult) ToJson(data interface{}) bool {
 	}
 }
 
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
 func (hr *HttpResult) ToJsonData() *simplejson.Json {
 	r, err := simplejson.NewJson(hr.Body)
 	if err != nil {
@@ -44,14 +60,29 @@ func (hr *HttpResult) ToJsonData() *simplejson.Json {
 	}
 }
 
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
 func (hr *HttpResult) ToString() string {
 	return string(hr.Body)
 }
 
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
 func (hr *HttpResult) IsSuccess() bool {
 	return hr.Status == http.StatusOK
 }
 
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
 func (hr *HttpResult) ToQuery() *goquery.Document {
 	doc, err := goquery.NewDocumentFromReader(bytes.NewBuffer(hr.Body))
 	if err != nil {
@@ -60,4 +91,13 @@ func (hr *HttpResult) ToQuery() *goquery.Document {
 	} else {
 		return doc
 	}
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func (hr *HttpResult) ToFile(filePath string) bool {
+	return kfile.WriteBytes(filePath, hr.Body)
 }
