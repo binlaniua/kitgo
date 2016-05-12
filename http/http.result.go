@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"io/ioutil"
 	"github.com/PuerkitoBio/goquery"
-	"log"
 	"bytes"
 	"github.com/binlaniua/kitgo/file"
 	"github.com/binlaniua/kitgo"
