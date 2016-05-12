@@ -9,7 +9,7 @@ var (
 )
 
 func init() {
-	log.SetFlags(log.Lshortfile | log.Ldate)
+	log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
 }
 
 //-------------------------------------
