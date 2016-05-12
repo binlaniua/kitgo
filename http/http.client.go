@@ -198,5 +198,5 @@ func (c *HttpClient) doRequest(req *http.Request) *HttpResult {
 		}
 		return nil
 	}
-	return NewHttpResult(resp)
+	return NewHttpResult(resp, req.URL.String())
 }

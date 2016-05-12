@@ -9,12 +9,14 @@ import (
 	"log"
 	"bytes"
 	"github.com/binlaniua/kitgo/file"
+	"github.com/binlaniua/kitgo"
 )
 
 type HttpResult struct {
-	Status int
-	Body   []byte
-	Origin *http.Response
+	Status   int
+	Body     []byte
+	Url      string
+	Response *http.Response
 }
 
 //-------------------------------------
@@ -22,13 +24,13 @@ type HttpResult struct {
 //
 //
 //-------------------------------------
-func NewHttpResult(res *http.Response) *HttpResult {
+func NewHttpResult(res *http.Response, urlStr string) *HttpResult {
 	defer res.Body.Close()
 	bytes, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return nil
 	}
-	r := &HttpResult{res.StatusCode, bytes, res}
+	r := &HttpResult{res.StatusCode, bytes, urlStr, res}
 	return r
 }
 
@@ -40,6 +42,7 @@ func NewHttpResult(res *http.Response) *HttpResult {
 func (hr *HttpResult) ToJson(data interface{}) bool {
 	err := json.Unmarshal(hr.Body, data)
 	if err != nil {
+		kitgo.Log(hr.Url, " 转换JSON失败 => ", err);
 		return false
 	} else {
 		return true
@@ -51,12 +54,13 @@ func (hr *HttpResult) ToJson(data interface{}) bool {
 //
 //
 //-------------------------------------
-func (hr *HttpResult) ToJsonData() *simplejson.Json {
+func (hr *HttpResult) ToJsonData() (*simplejson.Json, bool) {
 	r, err := simplejson.NewJson(hr.Body)
 	if err != nil {
-		return nil
+		kitgo.Log(hr.Url, " 转换JSON失败 => ", err);
+		return nil, false
 	} else {
-		return r
+		return r, true
 	}
 }
 
@@ -83,13 +87,13 @@ func (hr *HttpResult) IsSuccess() bool {
 //
 //
 //-------------------------------------
-func (hr *HttpResult) ToQuery() *goquery.Document {
+func (hr *HttpResult) ToQuery() (*goquery.Document, bool) {
 	doc, err := goquery.NewDocumentFromReader(bytes.NewBuffer(hr.Body))
 	if err != nil {
-		log.Println(err);
-		return nil
+		kitgo.Log(hr.Url, " 转换Document失败  => ", err);
+		return nil, false
 	} else {
-		return doc
+		return doc, true
 	}
 }
 
