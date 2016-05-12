@@ -1,8 +1,8 @@
-package kfile
+package file
 
 import (
 	"os"
-	"github.com/binlaniua/kitgo/kconfig"
+	"github.com/binlaniua/kitgo/config"
 )
 
 //-------------------------------------
@@ -25,7 +25,7 @@ func WriteBytes(filePath string, data []byte) bool {
 		//kconfig.Log(filePath, "打开文件失败,", err)
 		file, err = os.Create(filePath)
 		if err != nil {
-			kconfig.Log(filePath, "创建文件失败,", err)
+			config.Log(filePath, "创建文件失败,", err)
 			return false
 		}
 	}

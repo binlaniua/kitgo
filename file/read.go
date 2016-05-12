@@ -1,8 +1,8 @@
-package kfile
+package file
 
 import (
 	"os"
-	"github.com/binlaniua/kitgo/kconfig"
+	"github.com/binlaniua/kitgo/config"
 	"io/ioutil"
 	"bufio"
 	"io"
@@ -17,13 +17,13 @@ import (
 func ReadBytes(filePath string) ([]byte, bool) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		kconfig.Log(filePath, "文件不存在, 无法读取")
+		config.Log(filePath, "文件不存在, 无法读取")
 		return nil, false
 	}
 	defer file.Close()
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
-		kconfig.Log(filePath, "读取文件出错, ", err)
+		config.Log(filePath, "读取文件出错, ", err)
 		return nil, false
 	}
 	return data, true
@@ -51,7 +51,7 @@ func ReadString(filePath string) (string, bool) {
 func ReadLines(filePath string) ([]string, bool) {
 	f, err := os.Open(filePath)
 	if err != nil {
-		kconfig.Log(filePath, " 打开错误 =>", err)
+		config.Log(filePath, " 打开错误 =>", err)
 		return nil, false
 	}
 	defer f.Close()
@@ -79,7 +79,7 @@ func LoadJsonFile(filePath string, obj interface{}) bool {
 	}
 	err := json.Unmarshal(data, obj)
 	if err != nil {
-		kconfig.Log(filePath, "加载失败 => ", err)
+		config.Log(filePath, "加载失败 => ", err)
 		return false
 	}
 	return true

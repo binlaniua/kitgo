@@ -1,10 +1,10 @@
-package kfile
+package file
 
 import (
 	"os"
 	"path/filepath"
 	"os/exec"
-	"github.com/binlaniua/kitgo/kconfig"
+	"github.com/binlaniua/kitgo/config"
 )
 
 //-------------------------------------
@@ -28,7 +28,7 @@ func RenameTo(filePath string, newName string) (string, bool) {
 	newPath := dir + "/" + newName
 	err := os.Rename(filePath, newPath)
 	if err != nil {
-		kconfig.Log(filePath, " 重命名失败 => ", err)
+		config.Log(filePath, " 重命名失败 => ", err)
 		return "", false
 	}
 	return newPath, true
