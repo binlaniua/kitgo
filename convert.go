@@ -9,7 +9,7 @@ import (
 //
 //
 //-------------------------------------
-func FromUnicode(src string) (string, bool) {
+func ConvertFromUnicode(src string) (string, bool) {
 	str, err := strconv.Unquote(`"` + src + `"`)
 	if err != nil {
 		Log(src, " 转换到中文失败 => ", err)
@@ -22,7 +22,7 @@ func FromUnicode(src string) (string, bool) {
 // 
 //
 //-------------------------------------
-func ToInt(src string) (int, bool) {
+func ConvertToInt(src string) (int, bool) {
 	if src == "" {
 		return 0, false
 	} else {
@@ -35,7 +35,12 @@ func ToInt(src string) (int, bool) {
 	}
 }
 
-func MustInt(src string) int {
-	r, _ := ToInt(src)
+//-------------------------------------
+//
+// 
+//
+//-------------------------------------
+func ConvertMustInt(src string) int {
+	r, _ := ConvertToInt(src)
 	return r
 }

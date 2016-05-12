@@ -8,7 +8,12 @@ import (
 	"crypto/tls"
 )
 
-func SendMail(host, port, user, pass string, mime string, title, body string, tos []string) bool {
+//-------------------------------------
+//
+// 
+//
+//-------------------------------------
+func MailSend(host, port, user, pass string, mime string, title, body string, tos []string) bool {
 	dest := fmt.Sprintf("%s:%s", host, port)
 	conn, err := tls.Dial("tcp", dest, &tls.Config{
 		InsecureSkipVerify:true,
@@ -67,6 +72,11 @@ func SendMail(host, port, user, pass string, mime string, title, body string, to
 	return true
 }
 
-func SendHtmlMail(host, port, user, pass, title, body string, tos []string) bool {
-	return SendMail(host, port, user, pass, `text/html; chartset="utf-8"`, title, body, tos)
+//-------------------------------------
+//
+// 
+//
+//-------------------------------------
+func MailSendHtml(host, port, user, pass, title, body string, tos []string) bool {
+	return MailSend(host, port, user, pass, `text/html; chartset="utf-8"`, title, body, tos)
 }
