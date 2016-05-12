@@ -1,9 +1,8 @@
-package string
+package kitgo 
 
 import (
 	"strings"
 	"regexp"
-	"github.com/binlaniua/kitgo/config"
 )
 
 //-------------------------------------
@@ -11,7 +10,7 @@ import (
 // 首字母小写
 //
 //-------------------------------------
-func FirstLetterLower(src string) string {
+func StringFirstLetterLower(src string) string {
 	return strings.ToLower(src[:1]) + src[1:]
 }
 
@@ -20,7 +19,7 @@ func FirstLetterLower(src string) string {
 // 首字母大写
 //
 //-------------------------------------
-func FirstLetterUpper(src string) string {
+func StringFirstLetterUpper(src string) string {
 	return strings.ToUpper(src[:1]) + src[1:]
 }
 
@@ -29,7 +28,7 @@ func FirstLetterUpper(src string) string {
 // 取首尾空格
 //
 //-------------------------------------
-func Trim(src string) string {
+func StringTrim(src string) string {
 	return strings.Trim(src, " ")
 }
 
@@ -38,7 +37,7 @@ func Trim(src string) string {
 // 
 //
 //-------------------------------------
-func Between(src string, start string, end string) (string, bool) {
+func StringBetween(src string, start string, end string) (string, bool) {
 	sI := strings.Index(src, start)
 	if sI >= 0 {
 		src = src[sI + len(start):]
@@ -46,11 +45,11 @@ func Between(src string, start string, end string) (string, bool) {
 		if eI > 0 {
 			return src[:eI], true
 		} else {
-			config.Log(src, "开始位置[", end, "]没有找到")
+			Log(src, "开始位置[", end, "]没有找到")
 			return src, false
 		}
 	} else {
-		config.Log(src, "开始位置[", start, "]没有找到")
+		Log(src, "开始位置[", start, "]没有找到")
 		return "", false
 	}
 }
@@ -60,7 +59,7 @@ func Between(src string, start string, end string) (string, bool) {
 // 
 //
 //-------------------------------------
-func StartWith(src string, s string) bool {
+func StringStartWith(src string, s string) bool {
 	return strings.Index(src, s) == 0;
 }
 
@@ -69,7 +68,7 @@ func StartWith(src string, s string) bool {
 // 
 //
 //-------------------------------------
-func After(src string, start string) string {
+func StringAfter(src string, start string) string {
 	sI := strings.Index(src, start)
 	if sI >= 0 {
 		return src[sI + len(start):]
@@ -83,7 +82,7 @@ func After(src string, start string) string {
 // 
 //
 //-------------------------------------
-func Before(src string, start string) string {
+func StringBefore(src string, start string) string {
 	sI := strings.Index(src, start)
 	if sI >= 1 {
 		return src[:sI]
@@ -97,10 +96,10 @@ func Before(src string, start string) string {
 // 
 //
 //-------------------------------------
-func Match(src string, p string, group int) string {
+func StringMatch(src string, p string, group int) string {
 	pattern, err := regexp.Compile(p)
 	if err != nil {
-		config.Log("构建正则出错 =>", p)
+		Log("构建正则出错 =>", p)
 		return ""
 	} else {
 		r := pattern.FindStringSubmatch(src)
@@ -117,7 +116,7 @@ func Match(src string, p string, group int) string {
 // 
 //
 //-------------------------------------
-func LeftPad(src string, length int, pad string) string {
+func StringLeftPad(src string, length int, pad string) string {
 	srcLen := len(src)
 	offset := length - srcLen
 	for i := 0; i < offset; i++ {

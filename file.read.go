@@ -1,8 +1,7 @@
-package file
+package kitgo
 
 import (
 	"os"
-	"github.com/binlaniua/kitgo/config"
 	"io/ioutil"
 	"bufio"
 	"io"
@@ -14,16 +13,16 @@ import (
 //
 //
 //-------------------------------------
-func ReadBytes(filePath string) ([]byte, bool) {
+func FileReadBytes(filePath string) ([]byte, bool) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		config.Log(filePath, "文件不存在, 无法读取")
+		Log(filePath, "文件不存在, 无法读取")
 		return nil, false
 	}
 	defer file.Close()
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
-		config.Log(filePath, "读取文件出错, ", err)
+		Log(filePath, "读取文件出错, ", err)
 		return nil, false
 	}
 	return data, true
@@ -34,8 +33,8 @@ func ReadBytes(filePath string) ([]byte, bool) {
 //
 //
 //-------------------------------------
-func ReadString(filePath string) (string, bool) {
-	data, ok := ReadBytes(filePath)
+func FileReadString(filePath string) (string, bool) {
+	data, ok := FileReadBytes(filePath)
 	if ok {
 		return string(data), true
 	} else {
@@ -48,10 +47,10 @@ func ReadString(filePath string) (string, bool) {
 //
 //
 //-------------------------------------
-func ReadLines(filePath string) ([]string, bool) {
+func FileReadLines(filePath string) ([]string, bool) {
 	f, err := os.Open(filePath)
 	if err != nil {
-		config.Log(filePath, " 打开错误 =>", err)
+		Log(filePath, " 打开错误 =>", err)
 		return nil, false
 	}
 	defer f.Close()
@@ -72,14 +71,14 @@ func ReadLines(filePath string) ([]string, bool) {
 //  读取Json文件
 //
 //-------------------------------------
-func LoadJsonFile(filePath string, obj interface{}) bool {
-	data, ok := ReadBytes(filePath)
+func FileLoadJsonFile(filePath string, obj interface{}) bool {
+	data, ok := FileReadBytes(filePath)
 	if !ok {
 		return false
 	}
 	err := json.Unmarshal(data, obj)
 	if err != nil {
-		config.Log(filePath, "加载失败 => ", err)
+		Log(filePath, "加载失败 => ", err)
 		return false
 	}
 	return true
@@ -90,6 +89,6 @@ func LoadJsonFile(filePath string, obj interface{}) bool {
 //  读取配置文件
 //
 //-------------------------------------
-func LoadProperties(filePath string) bool {
+func FileLoadProperties(filePath string) bool {
 	return false
 }

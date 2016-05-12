@@ -1,4 +1,4 @@
-package ksecurity
+package kitgo
 
 import (
 	"crypto/md5"

@@ -1,9 +1,8 @@
-package kexcel
+package excel
 
 import (
 	"github.com/tealeg/xlsx"
 	"github.com/extrame/xls"
-	"github.com/binlaniua/kitgo/kconfig"
 	"strings"
 )
 
@@ -15,7 +14,7 @@ import (
 func ReadXlsxCell(filePath string, sheetIndex int, rowIndex int, cellIndex int) (string, bool) {
 	xlFile, err := xlsx.OpenFile(filePath)
 	if err != nil {
-		kconfig.Log(filePath, " 读取excel报错 => ", err)
+		Log(filePath, " 读取excel报错 => ", err)
 		return "", false
 	}
 	if s := xlFile.Sheets[sheetIndex]; s != nil {
@@ -39,7 +38,7 @@ func ReadXlsxCell(filePath string, sheetIndex int, rowIndex int, cellIndex int) 
 func ReadXlsCell(filePath string, sheetIndex int, rowIndex uint16, cellIndex uint16) (string, bool) {
 	xlFile, err := xls.Open(filePath, "UTF-8")
 	if err != nil {
-		kconfig.Log(filePath, " 读取xls出错 => ", err)
+		Log(filePath, " 读取xls出错 => ", err)
 		return "", false
 	}
 	if s := xlFile.GetSheet(sheetIndex); s != nil {

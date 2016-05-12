@@ -1,8 +1,7 @@
-package convert
+package kitgo
 
 import (
 	"strconv"
-	"github.com/binlaniua/kitgo/config"
 )
 
 //-------------------------------------
@@ -13,7 +12,7 @@ import (
 func FromUnicode(src string) (string, bool) {
 	str, err := strconv.Unquote(`"` + src + `"`)
 	if err != nil {
-		config.Log(src, " 转换到中文失败 => ", err)
+		Log(src, " 转换到中文失败 => ", err)
 	}
 	return str, err != nil
 }

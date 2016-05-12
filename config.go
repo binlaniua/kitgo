@@ -1,4 +1,4 @@
-package config
+package kitgo
 
 import (
 	"log"
@@ -33,3 +33,4 @@ func LogF(f string, args ... interface{}) {
 		log.Panicf(f, args...)
 	}
 }
+
