@@ -1,4 +1,4 @@
-package kconfig
+package config
 
 import (
 	"log"

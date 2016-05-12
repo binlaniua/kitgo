@@ -1,4 +1,4 @@
-package kmail
+package mail
 
 import (
 	"net/smtp"
