@@ -1,8 +1,9 @@
-package kitgo
+package file
 
 import (
 	"os"
 	"path/filepath"
+	"github.com/binlaniua/kitgo"
 )
 
 
@@ -12,12 +13,12 @@ import (
 //
 //
 //-------------------------------------
-func FileRenameTo(filePath string, newName string) (string, bool) {
+func RenameTo(filePath string, newName string) (string, bool) {
 	dir := filepath.Dir(filePath)
 	newPath := dir + "/" + newName
 	err := os.Rename(filePath, newPath)
 	if err != nil {
-		Log(filePath, " 重命名失败 => ", err)
+		kitgo.Log(filePath, " 重命名失败 => ", err)
 		return "", false
 	}
 	return newPath, true

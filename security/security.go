@@ -1,4 +1,4 @@
-package kitgo
+package security
 
 import (
 	"crypto/md5"

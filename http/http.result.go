@@ -1,4 +1,4 @@
-package kitgo
+package http
 
 import (
 	"encoding/json"
@@ -8,6 +8,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"log"
 	"bytes"
+	"github.com/binlaniua/kitgo/file"
 )
 
 type HttpResult struct {
@@ -98,7 +99,7 @@ func (hr *HttpResult) ToQuery() *goquery.Document {
 //
 //-------------------------------------
 func (hr *HttpResult) ToFile(filePath string) bool {
-	return FileWriteBytes(filePath, hr.Body)
+	return file.WriteBytes(filePath, hr.Body)
 }
 
 //-------------------------------------

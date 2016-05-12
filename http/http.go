@@ -1,4 +1,4 @@
-package kitgo
+package http
 
 import (
 	"net/http"
@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"mime/multipart"
 	"io"
+	"github.com/binlaniua/kitgo"
 )
 
 //
@@ -17,7 +18,7 @@ import (
 func HttpGet(urlStr string) *HttpResult {
 	resp, err := http.Get(urlStr)
 	if err != nil {
-		Log(urlStr, " => ", err)
+		kitgo.Log(urlStr, " => ", err)
 		return nil
 	}
 	return NewHttpResult(resp)
@@ -57,7 +58,7 @@ func HttpPostFrom(urlStr string, dataMap map[string]string) *HttpResult {
 	}
 	resp, err := http.PostForm(urlStr, reqParams)
 	if err != nil {
-		Log(urlStr, " => ", err)
+		kitgo.Log(urlStr, " => ", err)
 		return nil
 	}
 	return NewHttpResult(resp)
@@ -72,7 +73,7 @@ func HttpPostJson(urlStr string, data interface{}) *HttpResult {
 	jsonData, _ := json.Marshal(data)
 	resp, err := http.Post(urlStr, "application/json;charset=utf-8", bytes.NewBuffer(jsonData))
 	if err != nil {
-		Log(urlStr, " => ", err)
+		kitgo.Log(urlStr, " => ", err)
 		return nil
 	}
 	return NewHttpResult(resp)
@@ -99,7 +100,7 @@ func HttpPostFile(urlStr string, dataMap map[string]interface{}) *HttpResult {
 	}
 	resp, err := http.Post(urlStr, write.FormDataContentType(), buff)
 	if err != nil {
-		Log(urlStr, " => ", err)
+		kitgo.Log(urlStr, " => ", err)
 		return nil
 	}
 	return NewHttpResult(resp)

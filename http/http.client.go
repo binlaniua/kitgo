@@ -1,4 +1,4 @@
-package kitgo
+package http
 
 import (
 	"net/http/cookiejar"

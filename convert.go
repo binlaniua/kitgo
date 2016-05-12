@@ -13,8 +13,9 @@ func ConvertFromUnicode(src string) (string, bool) {
 	str, err := strconv.Unquote(`"` + src + `"`)
 	if err != nil {
 		Log(src, " 转换到中文失败 => ", err)
+		return "", false
 	}
-	return str, err != nil
+	return str, true
 }
 
 //-------------------------------------
@@ -37,7 +38,7 @@ func ConvertToInt(src string) (int, bool) {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func ConvertMustInt(src string) int {

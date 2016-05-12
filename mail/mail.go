@@ -1,4 +1,4 @@
-package kitgo
+package mail
 
 import (
 	"net/smtp"
@@ -13,7 +13,7 @@ import (
 // 
 //
 //-------------------------------------
-func MailSend(host, port, user, pass string, mime string, title, body string, tos []string) bool {
+func Send(host, port, user, pass string, mime string, title, body string, tos []string) bool {
 	dest := fmt.Sprintf("%s:%s", host, port)
 	conn, err := tls.Dial("tcp", dest, &tls.Config{
 		InsecureSkipVerify:true,
@@ -74,9 +74,9 @@ func MailSend(host, port, user, pass string, mime string, title, body string, to
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
-func MailSendHtml(host, port, user, pass, title, body string, tos []string) bool {
-	return MailSend(host, port, user, pass, `text/html; chartset="utf-8"`, title, body, tos)
+func SendHtml(host, port, user, pass, title, body string, tos []string) bool {
+	return Send(host, port, user, pass, `text/html; chartset="utf-8"`, title, body, tos)
 }

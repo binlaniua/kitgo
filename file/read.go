@@ -1,4 +1,4 @@
-package kitgo
+package file
 
 import (
 	"os"
@@ -6,6 +6,7 @@ import (
 	"bufio"
 	"io"
 	"encoding/json"
+	"github.com/binlaniua/kitgo"
 )
 
 //-------------------------------------
@@ -13,16 +14,16 @@ import (
 //
 //
 //-------------------------------------
-func FileReadBytes(filePath string) ([]byte, bool) {
+func ReadBytes(filePath string) ([]byte, bool) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		Log(filePath, "文件不存在, 无法读取")
+		kitgo.Log(filePath, "文件不存在, 无法读取")
 		return nil, false
 	}
 	defer file.Close()
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
-		Log(filePath, "读取文件出错, ", err)
+		kitgo.Log(filePath, "读取文件出错, ", err)
 		return nil, false
 	}
 	return data, true
@@ -33,8 +34,8 @@ func FileReadBytes(filePath string) ([]byte, bool) {
 //
 //
 //-------------------------------------
-func FileReadString(filePath string) (string, bool) {
-	data, ok := FileReadBytes(filePath)
+func ReadString(filePath string) (string, bool) {
+	data, ok := ReadBytes(filePath)
 	if ok {
 		return string(data), true
 	} else {
@@ -47,10 +48,10 @@ func FileReadString(filePath string) (string, bool) {
 //
 //
 //-------------------------------------
-func FileReadLines(filePath string) ([]string, bool) {
+func ReadLines(filePath string) ([]string, bool) {
 	f, err := os.Open(filePath)
 	if err != nil {
-		Log(filePath, " 打开错误 =>", err)
+		kitgo.Log(filePath, " 打开错误 =>", err)
 		return nil, false
 	}
 	defer f.Close()
@@ -71,14 +72,14 @@ func FileReadLines(filePath string) ([]string, bool) {
 //  读取Json文件
 //
 //-------------------------------------
-func FileLoadJsonFile(filePath string, obj interface{}) bool {
-	data, ok := FileReadBytes(filePath)
+func LoadJsonFile(filePath string, obj interface{}) bool {
+	data, ok := ReadBytes(filePath)
 	if !ok {
 		return false
 	}
 	err := json.Unmarshal(data, obj)
 	if err != nil {
-		Log(filePath, "加载失败 => ", err)
+		kitgo.Log(filePath, "加载失败 => ", err)
 		return false
 	}
 	return true
@@ -89,6 +90,6 @@ func FileLoadJsonFile(filePath string, obj interface{}) bool {
 //  读取配置文件
 //
 //-------------------------------------
-func FileLoadProperties(filePath string) bool {
+func LoadProperties(filePath string) bool {
 	return false
 }
