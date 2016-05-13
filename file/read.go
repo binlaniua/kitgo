@@ -65,6 +65,20 @@ func ReadLines(filePath string) ([]string, error) {
 
 //-------------------------------------
 //
+//
+//
+//-------------------------------------
+func IsExist(filePath string) bool {
+	_, err := os.Stat(filePath)
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
+}
+
+//-------------------------------------
+//
 //  读取Json文件
 //
 //-------------------------------------
