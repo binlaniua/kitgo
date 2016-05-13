@@ -1,8 +1,9 @@
-package kitgo 
+package kitgo
 
 import (
 	"strings"
 	"regexp"
+	"errors"
 )
 
 //-------------------------------------
@@ -68,12 +69,12 @@ func StringStartWith(src string, s string) bool {
 // 
 //
 //-------------------------------------
-func StringAfter(src string, start string) string {
+func StringAfter(src string, start string) (string, bool) {
 	sI := strings.Index(src, start)
 	if sI >= 0 {
-		return src[sI + len(start):]
+		return src[sI + len(start):], true
 	} else {
-		return "";
+		return "", false
 	}
 }
 
@@ -82,12 +83,12 @@ func StringAfter(src string, start string) string {
 // 
 //
 //-------------------------------------
-func StringBefore(src string, start string) string {
+func StringBefore(src string, start string) (string, bool) {
 	sI := strings.Index(src, start)
 	if sI >= 1 {
-		return src[:sI]
+		return src[:sI], true
 	} else {
-		return "";
+		return "", false
 	}
 }
 
@@ -96,17 +97,16 @@ func StringBefore(src string, start string) string {
 // 
 //
 //-------------------------------------
-func StringMatch(src string, p string, group int) string {
+func StringMatch(src string, p string, group int) (string, error) {
 	pattern, err := regexp.Compile(p)
 	if err != nil {
-		Log("构建正则出错 =>", p)
-		return ""
+		return "", err
 	} else {
 		r := pattern.FindStringSubmatch(src)
 		if len(r) > group {
-			return r[group]
+			return r[group], nil
 		} else {
-			return ""
+			return "", errors.New("匹配失败")
 		}
 	}
 }
