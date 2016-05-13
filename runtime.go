@@ -29,3 +29,16 @@ func RuntimePath() string {
 	path, _ := filepath.Abs(file)
 	return path
 }
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func ExceptionCatch() interface{} {
+	err := recover()
+	if err != nil {
+		Log("尝试恢复, 出错原因 => ", err)
+	}
+	return err
+}
