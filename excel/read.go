@@ -4,6 +4,7 @@ import (
 	"github.com/tealeg/xlsx"
 	"github.com/extrame/xls"
 	"strings"
+	"errors"
 )
 
 //-------------------------------------
@@ -11,23 +12,22 @@ import (
 //
 //
 //-------------------------------------
-func ReadXlsxCell(filePath string, sheetIndex int, rowIndex int, cellIndex int) (string, bool) {
+func ReadXlsxCell(filePath string, sheetIndex int, rowIndex int, cellIndex int) (string, error) {
 	xlFile, err := xlsx.OpenFile(filePath)
 	if err != nil {
-		Log(filePath, " 读取excel报错 => ", err)
-		return "", false
+		return "", err
 	}
 	if s := xlFile.Sheets[sheetIndex]; s != nil {
 		if r := s.Rows[rowIndex]; r != nil {
 			if c := r.Cells[cellIndex]; c != nil {
 				r, e := c.String()
-				return r, e == nil
+				return r, e
 			} else {
-				return "", false
+				return "", errors.New("没有该所有的单元格")
 			}
 		}
 	}
-	return "", false
+	return "", errors.New("没有该索引的Sheet")
 }
 
 //-------------------------------------
@@ -35,20 +35,19 @@ func ReadXlsxCell(filePath string, sheetIndex int, rowIndex int, cellIndex int) 
 //
 //
 //-------------------------------------
-func ReadXlsCell(filePath string, sheetIndex int, rowIndex uint16, cellIndex uint16) (string, bool) {
+func ReadXlsCell(filePath string, sheetIndex int, rowIndex uint16, cellIndex uint16) (string, error) {
 	xlFile, err := xls.Open(filePath, "UTF-8")
 	if err != nil {
-		Log(filePath, " 读取xls出错 => ", err)
-		return "", false
+		return "", err
 	}
 	if s := xlFile.GetSheet(sheetIndex); s != nil {
 		if r := s.Rows[rowIndex]; r != nil {
 			if c := r.Cols[cellIndex]; c != nil {
-				return strings.Join(c.String(xlFile), ""), true
+				return strings.Join(c.String(xlFile), ""), nil
 			} else {
-				return "", false
+				return "", errors.New("没有该索引的单元格")
 			}
 		}
 	}
-	return "", false
+	return "", errors.New("没有该索引的Sheet")
 }
