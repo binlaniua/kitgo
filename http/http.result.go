@@ -8,7 +8,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"bytes"
 	"github.com/binlaniua/kitgo/file"
-	"github.com/binlaniua/kitgo"
 )
 
 type HttpResult struct {
@@ -41,7 +40,7 @@ func NewHttpResult(res *http.Response, urlStr string) *HttpResult {
 func (hr *HttpResult) ToJson(data interface{}) bool {
 	err := json.Unmarshal(hr.Body, data)
 	if err != nil {
-		kitgo.Log(hr.Url, " 转换JSON失败 => ", err);
+		//kitgo.Log(hr.Url, " 转换JSON失败 => ", err);
 		return false
 	} else {
 		return true
@@ -56,7 +55,7 @@ func (hr *HttpResult) ToJson(data interface{}) bool {
 func (hr *HttpResult) ToJsonData() (*simplejson.Json, bool) {
 	r, err := simplejson.NewJson(hr.Body)
 	if err != nil {
-		kitgo.Log(hr.Url, " 转换JSON失败 => ", err);
+		//kitgo.Log(hr.Url, " 转换JSON失败 => ", err);
 		return nil, false
 	} else {
 		return r, true
@@ -89,7 +88,7 @@ func (hr *HttpResult) IsSuccess() bool {
 func (hr *HttpResult) ToQuery() (*goquery.Document, bool) {
 	doc, err := goquery.NewDocumentFromReader(bytes.NewBuffer(hr.Body))
 	if err != nil {
-		kitgo.Log(hr.Url, " 转换Document失败  => ", err);
+		//kitgo.Log(hr.Url, " 转换Document失败  => ", err);
 		return nil, false
 	} else {
 		return doc, true
