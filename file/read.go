@@ -34,9 +34,9 @@ func ReadBytes(filePath string) ([]byte, error) {
 func ReadString(filePath string) (string, error) {
 	data, err := ReadBytes(filePath)
 	if err != nil {
-		return string(data), err
+		return "", err
 	} else {
-		return "", nil
+		return string(data), err
 	}
 }
 
