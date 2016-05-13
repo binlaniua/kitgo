@@ -31,9 +31,26 @@ func RenameTo(filePath string, newName string) (string, bool) {
 //
 //
 //-------------------------------------
-func Join(args ... string) string {
+func PathJoin(args ... string) string {
 	s := string(os.PathSeparator)
 	return strings.Join(args, s)
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func PathToFileName(filePath string) string {
+	s := strings.LastIndexAny(filePath, string(os.PathSeparator))
+	if s >= 0 {
+		filePath = filePath[s + 1:]
+	}
+	e := strings.Index(filePath, ".")
+	if e >= 0 {
+		filePath = filePath[:e]
+	}
+	return filePath
 }
 
 //-------------------------------------
