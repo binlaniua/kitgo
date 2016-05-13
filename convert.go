@@ -45,3 +45,24 @@ func ConvertMustInt(src string) int {
 	r, _ := ConvertToInt(src)
 	return r
 }
+
+
+//-------------------------------------
+//
+// 
+//
+//-------------------------------------
+func ConvertToFloat(src string) (float64, error) {
+	r, err := strconv.ParseFloat(src, 64)
+	return r, err
+}
+
+//-------------------------------------
+//
+// 
+//
+//-------------------------------------
+func ConvertMustFloat(src string) float64 {
+	r, _ := ConvertToFloat(src)
+	return r
+}
