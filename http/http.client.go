@@ -31,6 +31,12 @@ type HttpClientOption struct {
 	Debug         bool
 }
 
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
 func NewHttpClient(o *HttpClientOption) *HttpClient {
 	j, _ := cookiejar.New(&cookiejar.Options{})
 	c := &http.Client{
@@ -67,6 +73,20 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 	return hc
 }
 
+//-------------------------------------
+//
+// 设置超时时间
+//
+//-------------------------------------
+func (c *HttpClient) SetTimeout(t time.Duration) {
+	c.client.Timeout = t
+}
+
+//-------------------------------------
+//
+// 
+//
+//-------------------------------------
 func (c *HttpClient) SetCookie(mm map[string]map[string]string) {
 	for site, siteCs := range mm {
 		u, _ := url.Parse(site)
@@ -77,7 +97,6 @@ func (c *HttpClient) SetCookie(mm map[string]map[string]string) {
 		}
 		c.cookie.SetCookies(u, cs)
 	}
-	//log.Println(c.cookie)
 }
 
 //
@@ -85,7 +104,7 @@ func (c *HttpClient) SetCookie(mm map[string]map[string]string) {
 //
 //
 //
-func (c *HttpClient) Get(urlStr string) *HttpResult {
+func (c *HttpClient) Get(urlStr string) (*HttpResult, error) {
 	req, _ := http.NewRequest("GET", urlStr, nil)
 	return c.doRequest(req)
 }
@@ -95,24 +114,24 @@ func (c *HttpClient) Get(urlStr string) *HttpResult {
 //
 //
 //-------------------------------------
-func (c *HttpClient) GetReply(urlStr string, reply int) *HttpResult {
-	r := c.Get(urlStr)
+func (c *HttpClient) GetReply(urlStr string, reply int) (*HttpResult, error) {
+	r, err := c.Get(urlStr)
 	for i := 0; i < reply; i++ {
-		if r != nil {
-			return r
+		if err == nil {
+			return r, nil
 		} else {
-			r = c.Get(urlStr)
+			r, err = c.Get(urlStr)
 		}
 	}
-	return r
+	return r, err
 }
 
+//-------------------------------------
 //
 //
 //
-//
-//
-func (c *HttpClient) Post(urlStr string, dataMap map[string]string) *HttpResult {
+//-------------------------------------
+func (c *HttpClient) Post(urlStr string, dataMap map[string]string) (*HttpResult, error) {
 	reqParams := url.Values{}
 	if dataMap != nil {
 		for k, v := range dataMap {
@@ -129,36 +148,36 @@ func (c *HttpClient) Post(urlStr string, dataMap map[string]string) *HttpResult 
 //
 //
 //-------------------------------------
-func (c *HttpClient) PostReply(urlStr string, dataMap map[string]string, reply int) *HttpResult {
-	r := c.Post(urlStr, dataMap)
+func (c *HttpClient) PostReply(urlStr string, dataMap map[string]string, reply int) (*HttpResult, error) {
+	r, err := c.Post(urlStr, dataMap)
 	for i := 0; i < reply; i++ {
-		if r != nil {
-			return r
+		if err == nil {
+			return r, nil
 		} else {
-			r = c.Post(urlStr, dataMap)
+			r, err = c.Post(urlStr, dataMap)
 		}
 	}
-	return r
+	return r, err
 }
 
+//-------------------------------------
 //
 //
 //
-//
-//
-func (c *HttpClient) PostJson(urlStr string, data interface{}) *HttpResult {
+//-------------------------------------
+func (c *HttpClient) PostJson(urlStr string, data interface{}) (*HttpResult, error) {
 	jsonData, _ := json.Marshal(data)
 	req, _ := http.NewRequest("POST", urlStr, bytes.NewBuffer(jsonData))
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
 	return c.doRequest(req)
 }
 
+//-------------------------------------
 //
 //
 //
-//
-//
-func (c *HttpClient) PostFile(urlStr string, dataMap map[string]interface{}) *HttpResult {
+//-------------------------------------
+func (c *HttpClient) PostFile(urlStr string, dataMap map[string]interface{}) (*HttpResult, error) {
 	buff := &bytes.Buffer{}
 	write := multipart.NewWriter(buff)
 	if dataMap != nil {
@@ -177,12 +196,12 @@ func (c *HttpClient) PostFile(urlStr string, dataMap map[string]interface{}) *Ht
 	return c.doRequest(req)
 }
 
+//-------------------------------------
 //
+// 
 //
-//
-//
-//
-func (c *HttpClient) doRequest(req *http.Request) *HttpResult {
+//-------------------------------------
+func (c *HttpClient) doRequest(req *http.Request) (*HttpResult, error) {
 	if c.option.DefaultHeader != nil {
 		for k, v := range c.option.DefaultHeader {
 			req.Header.Add(k, v)
@@ -193,10 +212,7 @@ func (c *HttpClient) doRequest(req *http.Request) *HttpResult {
 	}
 	resp, err := c.client.Do(req)
 	if err != nil {
-		if c.option.Debug {
-			log.Println(req.URL.String(), " 获取失败 => ", err)
-		}
-		return nil
+		return nil, err
 	}
-	return NewHttpResult(resp, req.URL.String())
+	return NewHttpResult(resp, req.URL.String()), nil
 }

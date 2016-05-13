@@ -2,6 +2,7 @@
 ```
 go get github.com/tealeg/xlsx
 go get github.com/extrame/xls
+go get github.com/howeyc/fsnotify
 ```
 ## convert 转换
 ```

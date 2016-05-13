@@ -6,7 +6,6 @@ import (
 	"bufio"
 	"io"
 	"encoding/json"
-	"github.com/binlaniua/kitgo"
 )
 
 //-------------------------------------
@@ -14,19 +13,17 @@ import (
 //
 //
 //-------------------------------------
-func ReadBytes(filePath string) ([]byte, bool) {
+func ReadBytes(filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		kitgo.Log(filePath, "文件不存在, 无法读取")
-		return nil, false
+		return nil, err
 	}
 	defer file.Close()
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
-		kitgo.Log(filePath, "读取文件出错, ", err)
-		return nil, false
+		return nil, err
 	}
-	return data, true
+	return data, nil
 }
 
 //-------------------------------------
@@ -34,12 +31,12 @@ func ReadBytes(filePath string) ([]byte, bool) {
 //
 //
 //-------------------------------------
-func ReadString(filePath string) (string, bool) {
-	data, ok := ReadBytes(filePath)
-	if ok {
-		return string(data), true
+func ReadString(filePath string) (string, error) {
+	data, err := ReadBytes(filePath)
+	if err != nil {
+		return string(data), err
 	} else {
-		return "", false
+		return "", nil
 	}
 }
 
@@ -48,11 +45,10 @@ func ReadString(filePath string) (string, bool) {
 //
 //
 //-------------------------------------
-func ReadLines(filePath string) ([]string, bool) {
+func ReadLines(filePath string) ([]string, error) {
 	f, err := os.Open(filePath)
 	if err != nil {
-		kitgo.Log(filePath, " 打开错误 =>", err)
-		return nil, false
+		return nil, err
 	}
 	defer f.Close()
 	rd := bufio.NewReader(f)
@@ -64,7 +60,7 @@ func ReadLines(filePath string) ([]string, bool) {
 		}
 		r = append(r, line[:len(line) - 1])
 	}
-	return r, true
+	return r, nil
 }
 
 //-------------------------------------
@@ -72,17 +68,16 @@ func ReadLines(filePath string) ([]string, bool) {
 //  读取Json文件
 //
 //-------------------------------------
-func LoadJsonFile(filePath string, obj interface{}) bool {
-	data, ok := ReadBytes(filePath)
-	if !ok {
-		return false
-	}
-	err := json.Unmarshal(data, obj)
+func LoadJsonFile(filePath string, obj interface{}) error {
+	data, err := ReadBytes(filePath)
 	if err != nil {
-		kitgo.Log(filePath, "加载失败 => ", err)
-		return false
+		return err
 	}
-	return true
+	err = json.Unmarshal(data, obj)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 //-------------------------------------
