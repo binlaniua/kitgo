@@ -15,15 +15,15 @@ import (
 //
 //
 //-------------------------------------
-func RenameTo(filePath string, newName string) (string, bool) {
+func RenameTo(filePath string, newName string) (string, error) {
 	dir := filepath.Dir(filePath)
 	newPath := dir + "/" + newName
 	err := os.Rename(filePath, newPath)
 	if err != nil {
 		kitgo.Log(filePath, " 重命名失败 => ", err)
-		return "", false
+		return "", err
 	}
-	return newPath, true
+	return newPath, nil
 }
 
 //-------------------------------------
@@ -72,4 +72,14 @@ func ListFilePaths(dir string) ([]string, error) {
 		lf = append(lf, p)
 	}
 	return lf, nil
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func AppendFile(filePath string) (*os.File, error) {
+	file, err := os.OpenFile(filePath, os.O_APPEND | os.O_CREATE, 0644)
+	return file, err
 }
