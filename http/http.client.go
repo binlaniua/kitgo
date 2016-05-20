@@ -14,7 +14,6 @@ import (
 	"time"
 	"log"
 	"crypto/tls"
-	"github.com/binlaniua/kitgo"
 )
 
 type HttpClient struct {
@@ -89,7 +88,7 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 	if o.SSLCertPath != "" && o.SSLKeyPath != "" {
 		err := hc.SetSSL(o.SSLCertPath, o.SSLKeyPath)
 		if err != nil {
-			kitgo.Log("证书加载出错 " + o.SSLCertPath + " : " + o.SSLKeyPath)
+			log.Fatal("证书加载出错 " + o.SSLCertPath + " : " + o.SSLKeyPath)
 		}
 	}
 	return hc
@@ -109,7 +108,7 @@ func (c *HttpClient) SetSSL(certPath string, keyPath string) error {
 		return err
 	}
 	c.transport.TLSClientConfig = &tls.Config{Certificates: []tls.Certificate{cert}}
-	kitgo.Log("设置证书成功 " + certPath + " : " + keyPath)
+	//kitgo.Log("设置证书成功 " + certPath + " : " + keyPath)
 	return nil
 }
 

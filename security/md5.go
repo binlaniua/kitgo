@@ -57,6 +57,6 @@ func MD5Map(m map[string]string, other ... string) string {
 	allStr := strings.Join(strList, "&")
 
 	//4. 大写加密
-	return MD5(strings.ToUpper(allStr))
+	return strings.ToUpper(MD5(allStr))
 }
 
