@@ -24,6 +24,7 @@ type HttpClient struct {
 type HttpClientOption struct {
 	Proxy         string
 	ProxySock5    string
+	Timeout       time.Duration
 	DefaultHeader map[string]string
 	DefaultCookie map[string]map[string]string
 	UseAgent      string
@@ -46,15 +47,26 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 	//
 	if o.Proxy != "" {
 		p, _ := url.Parse(o.Proxy)
-		c.Transport = &http.Transport{
+		t := &http.Transport{
 			Proxy: http.ProxyURL(p),
 		}
+		if (o.Timeout > 0) {
+			t.Dial = func(netw, addr string) (net.Conn, error) {
+				c, err := net.DialTimeout(netw, addr, time.Second * o.Timeout)
+				if err != nil {
+					return nil, err
+				}
+				c.SetDeadline(time.Now().Add(o.Timeout * time.Second))
+				return c, nil
+			}
+		}
+		c.Transport = t
 	} else if o.ProxySock5 != "" {
 		dialer, err := proxy.SOCKS5("tcp", o.ProxySock5,
 			nil,
 			&net.Dialer{
-				Timeout: 30 * time.Second,
-				KeepAlive: 30 * time.Second,
+				Timeout: o.Timeout * time.Second,
+				KeepAlive: o.Timeout * time.Second,
 			},
 		)
 		if err != nil {
@@ -63,7 +75,7 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 		c.Transport = &http.Transport{
 			Proxy: nil,
 			Dial: dialer.Dial,
-			TLSHandshakeTimeout: 10 * time.Second,
+			TLSHandshakeTimeout: o.Timeout * time.Second,
 		}
 	}
 	hc := &HttpClient{c, j, o}
@@ -71,15 +83,6 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 		hc.SetCookie(o.DefaultCookie)
 	}
 	return hc
-}
-
-//-------------------------------------
-//
-// 设置超时时间
-//
-//-------------------------------------
-func (c *HttpClient) SetTimeout(t time.Duration) {
-	c.client.Timeout = t
 }
 
 //-------------------------------------
@@ -210,6 +213,7 @@ func (c *HttpClient) doRequest(req *http.Request) (*HttpResult, error) {
 	if c.option.UseAgent != "" {
 		req.Header.Add("User-Agent", c.option.UseAgent)
 	}
+	req.Header.Add("Connection", "close")
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
