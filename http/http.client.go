@@ -101,13 +101,15 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 //
 //-------------------------------------
 func (c *HttpClient) SetSSL(certPath string, keyPath string) error {
-	if c.transport != nil {
-		cert, err := tls.LoadX509KeyPair(certPath, keyPath)
-		if err != nil {
-			return err
-		}
-		c.transport.TLSClientConfig = &tls.Config{Certificates: []tls.Certificate{cert}, InsecureSkipVerify: true}
+	if c.transport == nil {
+		c.transport = &http.Transport{}
 	}
+	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
+	if err != nil {
+		return err
+	}
+	c.transport.TLSClientConfig = &tls.Config{Certificates: []tls.Certificate{cert}}
+	kitgo.Log("设置证书成功 " + certPath + " : " + keyPath)
 	return nil
 }
 
@@ -117,15 +119,16 @@ func (c *HttpClient) SetSSL(certPath string, keyPath string) error {
 //
 //-------------------------------------
 func (c *HttpClient) SetTimeout(to time.Duration) error {
-	if c.transport != nil {
-		c.transport.Dial = func(netw, addr string) (net.Conn, error) {
-			c, err := net.DialTimeout(netw, addr, time.Second * to)
-			if err != nil {
-				return nil, err
-			}
-			c.SetDeadline(time.Now().Add(to * time.Second))
-			return c, nil
+	if c.transport == nil {
+		c.transport = &http.Transport{}
+	}
+	c.transport.Dial = func(netw, addr string) (net.Conn, error) {
+		c, err := net.DialTimeout(netw, addr, time.Second * to)
+		if err != nil {
+			return nil, err
 		}
+		c.SetDeadline(time.Now().Add(to * time.Second))
+		return c, nil
 	}
 	return nil
 }
@@ -217,6 +220,17 @@ func (c *HttpClient) PostJson(urlStr string, data interface{}) (*HttpResult, err
 	jsonData, _ := json.Marshal(data)
 	req, _ := http.NewRequest("POST", urlStr, bytes.NewBuffer(jsonData))
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
+	return c.doRequest(req)
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func (c *HttpClient) PostXMLString(urlStr string, src string) (*HttpResult, error) {
+	req, _ := http.NewRequest("POST", urlStr, bytes.NewBuffer([]byte(src)))
+	req.Header.Add("Content-Type", "application/xml;charset=utf-8")
 	return c.doRequest(req)
 }
 
