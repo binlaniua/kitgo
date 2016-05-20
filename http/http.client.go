@@ -13,17 +13,22 @@ import (
 	"net"
 	"time"
 	"log"
+	"crypto/tls"
+	"github.com/binlaniua/kitgo"
 )
 
 type HttpClient struct {
-	client *http.Client
-	cookie *cookiejar.Jar
-	option *HttpClientOption
+	client    *http.Client
+	transport *http.Transport
+	cookie    *cookiejar.Jar
+	option    *HttpClientOption
 }
 
 type HttpClientOption struct {
 	Proxy         string
 	ProxySock5    string
+	SSLKeyPath    string
+	SSLCertPath   string
 	Timeout       time.Duration
 	DefaultHeader map[string]string
 	DefaultCookie map[string]map[string]string
@@ -39,10 +44,14 @@ type HttpClientOption struct {
 //
 //-------------------------------------
 func NewHttpClient(o *HttpClientOption) *HttpClient {
+	hc := &HttpClient{}
+	hc.option = o
 	j, _ := cookiejar.New(&cookiejar.Options{})
+	hc.cookie = j
 	c := &http.Client{
 		Jar:j,
 	}
+	hc.client = c
 
 	//
 	if o.Proxy != "" {
@@ -50,17 +59,8 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 		t := &http.Transport{
 			Proxy: http.ProxyURL(p),
 		}
-		if (o.Timeout > 0) {
-			t.Dial = func(netw, addr string) (net.Conn, error) {
-				c, err := net.DialTimeout(netw, addr, time.Second * o.Timeout)
-				if err != nil {
-					return nil, err
-				}
-				c.SetDeadline(time.Now().Add(o.Timeout * time.Second))
-				return c, nil
-			}
-		}
 		c.Transport = t
+		hc.transport = t
 	} else if o.ProxySock5 != "" {
 		dialer, err := proxy.SOCKS5("tcp", o.ProxySock5,
 			nil,
@@ -72,17 +72,62 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 		if err != nil {
 			log.Println("sock5 连接失败 => ", err)
 		}
-		c.Transport = &http.Transport{
+		t := &http.Transport{
 			Proxy: nil,
 			Dial: dialer.Dial,
 			TLSHandshakeTimeout: o.Timeout * time.Second,
 		}
+		c.Transport = t
+		hc.transport = t
 	}
-	hc := &HttpClient{c, j, o}
 	if o.DefaultCookie != nil {
 		hc.SetCookie(o.DefaultCookie)
 	}
+	if o.Timeout > 0 {
+		hc.SetTimeout(o.Timeout)
+	}
+	if o.SSLCertPath != "" && o.SSLKeyPath != "" {
+		err := hc.SetSSL(o.SSLCertPath, o.SSLKeyPath)
+		if err != nil {
+			kitgo.Log("证书加载出错 " + o.SSLCertPath + " : " + o.SSLKeyPath)
+		}
+	}
 	return hc
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func (c *HttpClient) SetSSL(certPath string, keyPath string) error {
+	if c.transport != nil {
+		cert, err := tls.LoadX509KeyPair(certPath, keyPath)
+		if err != nil {
+			return err
+		}
+		c.transport.TLSClientConfig = &tls.Config{Certificates: []tls.Certificate{cert}, InsecureSkipVerify: true}
+	}
+	return nil
+}
+
+//-------------------------------------
+//
+// 
+//
+//-------------------------------------
+func (c *HttpClient) SetTimeout(to time.Duration) error {
+	if c.transport != nil {
+		c.transport.Dial = func(netw, addr string) (net.Conn, error) {
+			c, err := net.DialTimeout(netw, addr, time.Second * to)
+			if err != nil {
+				return nil, err
+			}
+			c.SetDeadline(time.Now().Add(to * time.Second))
+			return c, nil
+		}
+	}
+	return nil
 }
 
 //-------------------------------------
