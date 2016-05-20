@@ -102,6 +102,7 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 func (c *HttpClient) SetSSL(certPath string, keyPath string) error {
 	if c.transport == nil {
 		c.transport = &http.Transport{}
+		c.client.Transport = c.transport
 	}
 	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
 	if err != nil {
@@ -120,6 +121,7 @@ func (c *HttpClient) SetSSL(certPath string, keyPath string) error {
 func (c *HttpClient) SetTimeout(to time.Duration) error {
 	if c.transport == nil {
 		c.transport = &http.Transport{}
+		c.client.Transport = c.transport
 	}
 	c.transport.Dial = func(netw, addr string) (net.Conn, error) {
 		c, err := net.DialTimeout(netw, addr, time.Second * to)
