@@ -52,13 +52,12 @@ func (hr *HttpResult) ToJson(data interface{}) bool {
 //
 //
 //-------------------------------------
-func (hr *HttpResult) ToJsonData() (*simplejson.Json, bool) {
+func (hr *HttpResult) ToJsonData() (*simplejson.Json, error) {
 	r, err := simplejson.NewJson(hr.Body)
 	if err != nil {
-		//kitgo.Log(hr.Url, " 转换JSON失败 => ", err);
-		return nil, false
+		return nil, err
 	} else {
-		return r, true
+		return r, nil
 	}
 }
 
