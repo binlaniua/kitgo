@@ -124,14 +124,14 @@ func (c *HttpClient) SetTimeout(to time.Duration) error {
 		c.client.Transport = c.transport
 	}
 	c.client.Timeout = to * time.Second
-	c.transport.Dial = func(netw, addr string) (net.Conn, error) {
-		c, err := net.DialTimeout(netw, addr, time.Second * to)
-		if err != nil {
-			return nil, err
-		}
-		c.SetDeadline(time.Now().Add(to * time.Second))
-		return c, nil
-	}
+	//c.transport.Dial = func(netw, addr string) (net.Conn, error) {
+	//	c, err := net.DialTimeout(netw, addr, time.Second * to)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	c.SetDeadline(time.Now().Add(to * time.Second))
+	//	return c, nil
+	//}
 	return nil
 }
 
