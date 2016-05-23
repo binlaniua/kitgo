@@ -123,6 +123,7 @@ func (c *HttpClient) SetTimeout(to time.Duration) error {
 		c.transport = &http.Transport{}
 		c.client.Transport = c.transport
 	}
+	c.client.Timeout = to * time.Second
 	c.transport.Dial = func(netw, addr string) (net.Conn, error) {
 		c, err := net.DialTimeout(netw, addr, time.Second * to)
 		if err != nil {
