@@ -62,6 +62,7 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 		p, _ := url.Parse(o.Proxy)
 		t := &http.Transport{
 			Proxy: http.ProxyURL(p),
+			DisableKeepAlives: true,
 		}
 		c.Transport = t
 		hc.transport = t
@@ -79,6 +80,7 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 		t := &http.Transport{
 			Proxy: nil,
 			Dial: dialer.Dial,
+			DisableKeepAlives: true,
 			TLSHandshakeTimeout: o.Timeout * time.Second,
 		}
 		c.Transport = t
@@ -124,7 +126,9 @@ func (c *HttpClient) SetSSL(certPath string, keyPath string) error {
 
 func (c *HttpClient) SetSSLData(certData, keyData []byte) error {
 	if c.transport == nil {
-		c.transport = &http.Transport{}
+		c.transport = &http.Transport{
+			DisableKeepAlives: true,
+		}
 		c.client.Transport = c.transport
 	}
 	cert, err := tls.X509KeyPair(certData, keyData)
@@ -132,7 +136,6 @@ func (c *HttpClient) SetSSLData(certData, keyData []byte) error {
 		return err
 	}
 	c.transport.TLSClientConfig = &tls.Config{Certificates: []tls.Certificate{cert}}
-	//kitgo.Log("设置证书成功 " + certPath + " : " + keyPath)
 	return nil
 }
 
@@ -143,17 +146,12 @@ func (c *HttpClient) SetSSLData(certData, keyData []byte) error {
 //-------------------------------------
 func (c *HttpClient) SetTimeout(to time.Duration) error {
 	if c.transport == nil {
-		c.transport = &http.Transport{}
+		c.transport = &http.Transport{
+			DisableKeepAlives: true,
+		}
 		c.client.Transport = c.transport
 	}
-	c.transport.Dial = func(netw, addr string) (net.Conn, error) {
-		c, err := net.DialTimeout(netw, addr, time.Second * to)
-		if err != nil {
-			return nil, err
-		}
-		c.SetDeadline(time.Now().Add(to * time.Second))
-		return c, nil
-	}
+	c.client.Timeout = to * time.Second
 	return nil
 }
 
