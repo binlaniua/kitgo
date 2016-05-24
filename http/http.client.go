@@ -14,6 +14,7 @@ import (
 	"time"
 	"log"
 	"crypto/tls"
+	"github.com/binlaniua/kitgo/file"
 )
 
 type HttpClient struct {
@@ -26,8 +27,12 @@ type HttpClient struct {
 type HttpClientOption struct {
 	Proxy         string
 	ProxySock5    string
+
 	SSLKeyPath    string
 	SSLCertPath   string
+	SSLKeyData    []byte
+	SSLCertData   []byte
+
 	Timeout       time.Duration
 	DefaultHeader map[string]string
 	DefaultCookie map[string]map[string]string
@@ -93,6 +98,12 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 			log.Fatal("证书加载出错 " + o.SSLCertPath + " : " + o.SSLKeyPath)
 		}
 	}
+	if o.SSLKeyData != nil && o.SSLCertData != nil {
+		err := hc.SetSSLData(o.SSLCertData, o.SSLKeyData)
+		if err != nil {
+			log.Fatal("证书加载出错 " + o.SSLCertData + " : " + o.SSLKeyData)
+		}
+	}
 	return hc
 }
 
@@ -102,13 +113,25 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 //
 //-------------------------------------
 func (c *HttpClient) SetSSL(certPath string, keyPath string) error {
+	cd, err := file.ReadBytes(certPath)
+	if err != nil {
+		return err
+	}
+	kd, err := file.ReadBytes(keyPath)
+	if err != nil {
+		return err
+	}
+	return c.SetSSLData(cd, kd)
+}
+
+func (c *HttpClient) SetSSLData(certData, keyData []byte) error {
 	if c.transport == nil {
 		c.transport = &http.Transport{
 			DisableKeepAlives: true,
 		}
 		c.client.Transport = c.transport
 	}
-	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
+	cert, err := tls.X509KeyPair(certData, keyData)
 	if err != nil {
 		return err
 	}
