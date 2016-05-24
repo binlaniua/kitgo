@@ -42,3 +42,33 @@ func ExceptionCatch() interface{} {
 	}
 	return err
 }
+
+//-------------------------------------
+//
+// 使用守护进程启动
+//
+//-------------------------------------
+func RunDaemon() (error) {
+	if os.Getppid() != 1 {
+		return Restart()
+	}
+	return nil
+}
+
+//-------------------------------------
+//
+// 重启
+//
+//-------------------------------------
+func Restart() error {
+	fp, err := filepath.Abs(os.Args[0])
+	if err != nil {
+		return err
+	}
+	cmd := exec.Command(fp, os.Args[:1]...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Start()
+	return nil
+}
