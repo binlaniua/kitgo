@@ -65,7 +65,7 @@ func Restart() error {
 	if err != nil {
 		return err
 	}
-	cmd := exec.Command(fp, os.Args[:1]...)
+	cmd := exec.Command(fp, os.Args[1:]...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

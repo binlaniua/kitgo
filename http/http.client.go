@@ -98,10 +98,10 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 			log.Fatal("证书加载出错 " + o.SSLCertPath + " : " + o.SSLKeyPath)
 		}
 	}
-	if o.SSLKeyData != nil && o.SSLCertData != nil {
+	if len(o.SSLKeyData) > 0 && len(o.SSLCertData) > 0 {
 		err := hc.SetSSLData(o.SSLCertData, o.SSLKeyData)
 		if err != nil {
-			log.Fatal("证书加载出错 " + o.SSLCertData + " : " + o.SSLKeyData)
+			log.Fatal("证书加载出错 " + string(o.SSLCertData) + " : " + string(o.SSLKeyData))
 		}
 	}
 	return hc
