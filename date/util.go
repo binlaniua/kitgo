@@ -3,6 +3,7 @@ package date
 import (
 	"time"
 	"fmt"
+	"strconv"
 )
 
 
@@ -30,3 +31,11 @@ func NowTimeStr() string {
 	return n.Format("15:04:05")
 }
 
+//-------------------------------------
+//
+// 
+//
+//-------------------------------------
+func TimeStamp() string {
+	return strconv.FormatInt(time.Now().UnixNano(), 10)
+}
