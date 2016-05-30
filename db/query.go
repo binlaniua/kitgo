@@ -33,7 +33,7 @@ func (r *RowData) ToInt() (int64, error) {
 	return re, nil
 }
 
-func (r *RowData) MustString() string  {
+func (r *RowData) MustString() string {
 	return r.ToString()
 }
 
@@ -87,6 +87,8 @@ func QueryMapsByAlias(alias string, sqlStr string, args ... interface{}) ([]map[
 	for rows.Next() {
 		rMap := mappingToMap(rows)
 		r = append(r, rMap)
+		//rows.Close()
+		//log.Println(rMap)
 	}
 	return r, nil
 }
@@ -152,7 +154,9 @@ func mappingToMap(row *sql.Rows) map[string]*RowData {
 	row.Scan(scanArgs...)
 	r := make(map[string]*RowData)
 	for i, col := range values {
-		r[columns[i]] = &RowData{col}
+		buff := make([]byte, 0, len(col))
+		buff = append(buff, col...)
+		r[columns[i]] = &RowData{buff}
 	}
 	return r
 }
