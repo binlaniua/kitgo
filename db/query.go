@@ -33,6 +33,10 @@ func (r *RowData) ToInt() (int64, error) {
 	return re, nil
 }
 
+func (r *RowData) MustString() string  {
+	return r.ToString()
+}
+
 //-------------------------------------
 //
 //
