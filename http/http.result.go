@@ -84,14 +84,22 @@ func (hr *HttpResult) IsSuccess() bool {
 //
 //
 //-------------------------------------
-func (hr *HttpResult) ToQuery() (*goquery.Document, bool) {
+func (hr *HttpResult) ToQuery() (*goquery.Document, error) {
 	doc, err := goquery.NewDocumentFromReader(bytes.NewBuffer(hr.Body))
+	return doc, err
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func (hr *HttpResult) ToQuerySelect(exp string) (*goquery.Selection, error) {
+	doc, err := hr.ToQuery()
 	if err != nil {
-		//kitgo.Log(hr.Url, " 转换Document失败  => ", err);
-		return nil, false
-	} else {
-		return doc, true
+		return nil, err
 	}
+	return doc.Find(exp), nil
 }
 
 //-------------------------------------
