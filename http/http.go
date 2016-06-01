@@ -64,6 +64,20 @@ func HttpPostFrom(urlStr string, dataMap map[string]string) *HttpResult {
 	return NewHttpResult(resp, urlStr)
 }
 
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func HttpPost(urlStr string, body string) *HttpResult  {
+	resp, err := http.Post(urlStr, "application/x-www-form-urlencoded", bytes.NewBuffer([]byte(body)))
+	if err != nil {
+		kitgo.Log(urlStr, " => ", err)
+		return nil
+	}
+	return NewHttpResult(resp, urlStr)
+}
+
 //
 //
 //
