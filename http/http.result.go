@@ -24,10 +24,7 @@ type HttpResult struct {
 //-------------------------------------
 func NewHttpResult(res *http.Response, urlStr string) *HttpResult {
 	defer res.Body.Close()
-	bytes, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return nil
-	}
+	bytes, _ := ioutil.ReadAll(res.Body)
 	r := &HttpResult{res.StatusCode, bytes, urlStr, res}
 	return r
 }

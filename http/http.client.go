@@ -15,6 +15,7 @@ import (
 	"log"
 	"crypto/tls"
 	"github.com/binlaniua/kitgo/file"
+	"errors"
 )
 
 type HttpClient struct {
@@ -153,6 +154,18 @@ func (c *HttpClient) SetTimeout(to time.Duration) error {
 	}
 	c.client.Timeout = to * time.Second
 	return nil
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+var errorNotFollowRedirect = errors.New("not follow redirect")
+func (c *HttpClient) NotFollowRedirect()  {
+	c.client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return errorNotFollowRedirect
+	}
 }
 
 //-------------------------------------
@@ -298,7 +311,9 @@ func (c *HttpClient) doRequest(req *http.Request) (*HttpResult, error) {
 	req.Close = true
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return nil, err
+		if e, ok := err.(*url.Error); ok && e.Err != errorNotFollowRedirect {
+			return nil, err
+		}
 	}
 	return NewHttpResult(resp, req.URL.String()), nil
 }
