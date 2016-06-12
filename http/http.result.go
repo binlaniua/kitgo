@@ -11,6 +11,7 @@ import (
 	"io"
 	"compress/gzip"
 	"log"
+	"github.com/binlaniua/kitgo"
 )
 
 type HttpResult struct {
@@ -24,9 +25,11 @@ type HttpResult struct {
 //
 //
 //-------------------------------------
-func NewHttpResult(res *http.Response, urlStr string) *HttpResult {
+func NewHttpResult(res *http.Response, isLazy bool) *HttpResult {
 	r := &HttpResult{Status:res.StatusCode, Response:res}
-	r.readBody()
+	if !isLazy {
+		r.readBody()
+	}
 	return r
 }
 
@@ -141,4 +144,14 @@ func (hr *HttpResult) IsEmpty() bool {
 //-------------------------------------
 func (hr *HttpResult) GetUrl() string {
 	return hr.Response.Request.URL.String()
+}
+
+//-------------------------------------
+//
+// 
+//
+//-------------------------------------
+func (hr *HttpResult) Close() {
+	defer kitgo.ExceptionCatch()
+	hr.Response.Body.Close()
 }

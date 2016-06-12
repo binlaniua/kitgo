@@ -21,8 +21,9 @@ func HttpGet(urlStr string) *HttpResult {
 		kitgo.Log(urlStr, " => ", err)
 		return nil
 	}
-	return NewHttpResult(resp, urlStr)
+	return NewHttpResult(resp, false)
 }
+
 
 //
 //
@@ -40,7 +41,7 @@ func HttpGetReply(urlStr string, times int) *HttpResult {
 		}
 		return nil
 	}
-	return NewHttpResult(resp, urlStr)
+	return NewHttpResult(resp, false)
 }
 
 
@@ -61,7 +62,7 @@ func HttpPostFrom(urlStr string, dataMap map[string]string) *HttpResult {
 		kitgo.Log(urlStr, " => ", err)
 		return nil
 	}
-	return NewHttpResult(resp, urlStr)
+	return NewHttpResult(resp, false)
 }
 
 //-------------------------------------
@@ -75,7 +76,7 @@ func HttpPost(urlStr string, body string) *HttpResult  {
 		kitgo.Log(urlStr, " => ", err)
 		return nil
 	}
-	return NewHttpResult(resp, urlStr)
+	return NewHttpResult(resp, false)
 }
 
 //
@@ -90,7 +91,7 @@ func HttpPostJson(urlStr string, data interface{}) *HttpResult {
 		kitgo.Log(urlStr, " => ", err)
 		return nil
 	}
-	return NewHttpResult(resp, urlStr)
+	return NewHttpResult(resp, false)
 }
 
 //
@@ -117,5 +118,5 @@ func HttpPostFile(urlStr string, dataMap map[string]interface{}) *HttpResult {
 		kitgo.Log(urlStr, " => ", err)
 		return nil
 	}
-	return NewHttpResult(resp, urlStr)
+	return NewHttpResult(resp, false)
 }

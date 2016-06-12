@@ -40,6 +40,8 @@ type HttpClientOption struct {
 	UseAgent      string
 	DefaultRefer  string
 	Debug         bool
+
+	IsLazy        bool
 }
 
 
@@ -162,7 +164,8 @@ func (c *HttpClient) SetTimeout(to time.Duration) error {
 //
 //-------------------------------------
 var errorNotFollowRedirect = errors.New("not follow redirect")
-func (c *HttpClient) NotFollowRedirect()  {
+
+func (c *HttpClient) NotFollowRedirect() {
 	c.client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 		return errorNotFollowRedirect
 	}
@@ -314,5 +317,5 @@ func (c *HttpClient) doRequest(req *http.Request) (*HttpResult, error) {
 			return nil, err
 		}
 	}
-	return NewHttpResult(resp, req.URL.String()), nil
+	return NewHttpResult(resp, c.option.IsLazy), nil
 }
