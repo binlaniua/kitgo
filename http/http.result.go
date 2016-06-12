@@ -8,12 +8,14 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"bytes"
 	"github.com/binlaniua/kitgo/file"
+	"io"
+	"compress/gzip"
+	"log"
 )
 
 type HttpResult struct {
 	Status   int
 	Body     []byte
-	Url      string
 	Response *http.Response
 }
 
@@ -23,10 +25,25 @@ type HttpResult struct {
 //
 //-------------------------------------
 func NewHttpResult(res *http.Response, urlStr string) *HttpResult {
-	defer res.Body.Close()
-	bytes, _ := ioutil.ReadAll(res.Body)
-	r := &HttpResult{res.StatusCode, bytes, urlStr, res}
+	r := &HttpResult{Status:res.StatusCode, Response:res}
+	r.readBody()
 	return r
+}
+
+func (hr *HttpResult) readBody() {
+	var reader io.ReadCloser
+	switch hr.Response.Header.Get("Content-Encoding") {
+	case "gzip":
+		reader, _ = gzip.NewReader(hr.Response.Body)
+	default:
+		reader = hr.Response.Body
+	}
+	defer reader.Close()
+	byteData, err := ioutil.ReadAll(reader)
+	if err != nil {
+		log.Println(hr.GetUrl(), " => 读取内容出错, ", err)
+	}
+	hr.Body = byteData
 }
 
 //-------------------------------------
@@ -115,4 +132,13 @@ func (hr *HttpResult) ToFile(filePath string) bool {
 //-------------------------------------
 func (hr *HttpResult) IsEmpty() bool {
 	return len(hr.Body) == 0
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func (hr *HttpResult) GetUrl() string {
+	return hr.Response.Request.URL.String()
 }

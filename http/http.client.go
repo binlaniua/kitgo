@@ -307,7 +307,6 @@ func (c *HttpClient) doRequest(req *http.Request) (*HttpResult, error) {
 	if c.option.UseAgent != "" {
 		req.Header.Add("User-Agent", c.option.UseAgent)
 	}
-	req.Header.Add("Connection", "close")
 	req.Close = true
 	resp, err := c.client.Do(req)
 	if err != nil {
