@@ -61,6 +61,20 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 	hc.client = c
 
 	//
+	if o.UseAgent == "" {
+		o.UseAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36"
+	}
+	if o.DefaultHeader == nil {
+		o.DefaultHeader = map[string]string{
+			"Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+			"Accept-Language":"zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4",
+			"Cache-Control":"max-age=0",
+			"Connection":"keep-alive",
+			"Upgrade-Insecure-Requests":"1",
+		}
+	}
+
+	//
 	if o.Proxy != "" {
 		p, _ := url.Parse(o.Proxy)
 		t := &http.Transport{
