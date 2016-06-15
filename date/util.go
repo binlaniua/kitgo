@@ -26,6 +26,21 @@ func NowDateStrExt(join string) string {
 //
 //
 //-------------------------------------
+func NowDateTimeStr() string {
+	return NowDateTimeStrExt("-", ":")
+}
+
+
+func NowDateTimeStrExt(dateJoin string, timeJoin string) string {
+	n := time.Now()
+	return n.Format(fmt.Sprintf("2006%s01%s02 15%s04%s05", dateJoin, dateJoin, timeJoin, timeJoin))
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
 func NowTimeStr() string {
 	n := time.Now()
 	return n.Format("15:04:05")
