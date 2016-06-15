@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 	"fmt"
-	"github.com/binlaniua/kitgo"
+	"log"
 )
 
 
@@ -52,15 +52,17 @@ func MD5Map(m map[string]string, other ... string) string {
 	}
 
 	//3 加额外的
-	if other != nil {
-		strList = append(strList, other ...)
-	}
 	allStr := strings.Join(strList, "&")
+	if other != nil {
+		for _, otherItem := range other  {
+			allStr = allStr + otherItem
+		}
+	}
 
 	//4. 大写加密
-	kitgo.Log("md5 加密前 => ", allStr)
+	log.Println(allStr)
 	r := strings.ToUpper(MD5(allStr))
-	kitgo.Log("md5 加密后 => ", r)
+	log.Println(r)
 	return r
 }
 
