@@ -6,7 +6,6 @@ import (
 	"sort"
 	"strings"
 	"fmt"
-	"log"
 )
 
 
@@ -60,9 +59,7 @@ func MD5Map(m map[string]string, other ... string) string {
 	}
 
 	//4. 大写加密
-	log.Println(allStr)
 	r := strings.ToUpper(MD5(allStr))
-	log.Println(r)
 	return r
 }
 
