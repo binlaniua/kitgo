@@ -84,6 +84,9 @@ func (hr *HttpResult) ToJsonData() (*simplejson.Json, error) {
 //
 //-------------------------------------
 func (hr *HttpResult) ToString() string {
+	if (hr.Body == nil) {
+		hr.readBody()
+	}
 	return string(hr.Body)
 }
 

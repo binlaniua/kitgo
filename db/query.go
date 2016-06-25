@@ -37,6 +37,11 @@ func (r *RowData) MustString() string {
 	return r.ToString()
 }
 
+func (r *RowData) MustInt() int64  {
+	result, _ := r.ToInt()
+	return result
+}
+
 //-------------------------------------
 //
 //

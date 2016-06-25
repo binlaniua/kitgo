@@ -58,7 +58,8 @@ func ReadLines(filePath string) ([]string, error) {
 		if err != nil || io.EOF == err {
 			break
 		}
-		r = append(r, line[:len(line) - 1])
+		line = line[:len(line) - 1]
+		r = append(r, line)
 	}
 	return r, nil
 }
