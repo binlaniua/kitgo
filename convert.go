@@ -2,7 +2,21 @@ package kitgo
 
 import (
 	"strconv"
+	"github.com/axgle/mahonia"
 )
+
+var (
+	decodeGBToUTF = mahonia.NewDecoder("GB18030")
+)
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func ConvertGBToUTF(src string) string {
+	return decodeGBToUTF.ConvertString(src)
+}
 
 //-------------------------------------
 //

@@ -3,11 +3,13 @@
 go get github.com/tealeg/xlsx
 go get github.com/extrame/xls
 go get github.com/howeyc/fsnotify
+go get github.com/axgle/mahonia
 ```
 ## convert 转换
 ```
 FromUnicode(src)    转换unicode到中文
 ToInt(src)          转换到数字
+GBToUTF(src)        Gb格式转换为UTF-8
 ```
 
 ## config 配置
