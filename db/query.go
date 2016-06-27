@@ -4,50 +4,18 @@ import (
 	"database/sql"
 	"strconv"
 	"errors"
-)
-
-var (
-	ERROR_QUERY_NO_DATA = errors.New("未查询到数据")
+	"log"
 )
 
 
-//-------------------------------------
-//
-//
-//
-//-------------------------------------
-type RowData struct {
-	data sql.RawBytes
-}
 
-func (r *RowData) ToString() string {
-	return string(r.data)
-}
-
-func (r *RowData) ToInt() (int64, error) {
-	s := r.ToString()
-	re, err := strconv.ParseInt(s, 10, 64)
-	if err != nil {
-		return 0, err
-	}
-	return re, nil
-}
-
-func (r *RowData) MustString() string {
-	return r.ToString()
-}
-
-func (r *RowData) MustInt() int64  {
-	result, _ := r.ToInt()
-	return result
-}
 
 //-------------------------------------
 //
 //
 //
 //-------------------------------------
-func HasData(sqlStr string, args ... interface{}) error {
+func HasData(sqlStr string, args ... interface{}) bool {
 	return HasDataByAlias(DEFAULT_DB_NAME, sqlStr, args...)
 }
 
@@ -56,15 +24,15 @@ func HasData(sqlStr string, args ... interface{}) error {
 //
 //
 //-------------------------------------
-func HasDataByAlias(alias string, sqlStr string, args ... interface{}) error {
+func HasDataByAlias(alias string, sqlStr string, args ... interface{}) bool {
 	r, err := QueryMapsByAlias(alias, sqlStr, args...)
 	if err != nil {
-		return err
+		log.Fatal("sql 语句出错")
 	}
 	if len(r) > 0 {
-		return nil
+		return true
 	} else {
-		return ERROR_QUERY_NO_DATA
+		return false
 	}
 }
 
@@ -73,7 +41,7 @@ func HasDataByAlias(alias string, sqlStr string, args ... interface{}) error {
 //
 //
 //-------------------------------------
-func QueryMaps(sqlStr string, args ... interface{}) ([]map[string]*RowData, error) {
+func QueryMaps(sqlStr string, args ... interface{}) ([]*QueryResult, error) {
 	return QueryMapsByAlias(DEFAULT_DB_NAME, sqlStr, args...)
 }
 
@@ -82,7 +50,7 @@ func QueryMaps(sqlStr string, args ... interface{}) ([]map[string]*RowData, erro
 //
 //
 //-------------------------------------
-func QueryMapsByAlias(alias string, sqlStr string, args ... interface{}) ([]map[string]*RowData, error) {
+func QueryMapsByAlias(alias string, sqlStr string, args ... interface{}) ([]*QueryResult, error) {
 	rows, err := QueryByAlias(alias, sqlStr, args...)
 	if err != nil {
 		return nil, err
@@ -95,7 +63,11 @@ func QueryMapsByAlias(alias string, sqlStr string, args ... interface{}) ([]map[
 		//rows.Close()
 		//log.Println(rMap)
 	}
-	return r, nil
+	rr := make([]*QueryResult, len(r))
+	for _, v := range r {
+		rr = append(rr, &QueryResult{v})
+	}
+	return rr, nil
 }
 
 //-------------------------------------
@@ -103,7 +75,7 @@ func QueryMapsByAlias(alias string, sqlStr string, args ... interface{}) ([]map[
 //
 //
 //-------------------------------------
-func QueryMap(sql string, args ... interface{}) (map[string]*RowData, error) {
+func QueryMap(sql string, args ... interface{}) (*QueryResult, error) {
 	return QueryMapByAlias(DEFAULT_DB_NAME, sql, args...)
 }
 
@@ -112,15 +84,15 @@ func QueryMap(sql string, args ... interface{}) (map[string]*RowData, error) {
 //
 //
 //-------------------------------------
-func QueryMapByAlias(alias string, sql string, args ... interface{}) (map[string]*RowData, error) {
+func QueryMapByAlias(alias string, sql string, args ... interface{}) (*QueryResult, error) {
 	r, err := QueryMapsByAlias(alias, sql, args...)
 	if err != nil {
 		return nil, err
 	}
 	if len(r) == 0 {
-		return nil, ERROR_QUERY_NO_DATA
+		return nil, errors.New("no data")
 	}
-	return r[0], nil
+	return &QueryResult{r[0]}, nil
 }
 
 //-------------------------------------
