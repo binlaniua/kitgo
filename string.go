@@ -8,6 +8,24 @@ import (
 
 //-------------------------------------
 //
+// 正则切割
+//
+//-------------------------------------
+func StringSplitByRegexp(src string, reg string) []string  {
+	pattern := regexp.MustCompile(reg)
+	indexes := pattern.FindAllStringIndex(src, -1)
+	laststart := 0
+	result := make([]string, len(indexes) + 1)
+	for i, element := range indexes {
+		result[i] = src[laststart:element[0]]
+		laststart = element[1]
+	}
+	result[len(indexes)] = src[laststart:len(src)]
+	return result
+}
+
+//-------------------------------------
+//
 // 首字母小写
 //
 //-------------------------------------
