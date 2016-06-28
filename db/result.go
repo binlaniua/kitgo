@@ -44,7 +44,7 @@ func (r *QueryResult) ConvertTo(target interface{}) bool {
 func (r *QueryResult) GetString(key string) string {
 	rr, ok := r.dataMap[key]
 	if ok {
-		return rr.MustString()
+		return rr.ToString()
 	} else {
 		return ""
 	}
@@ -53,7 +53,12 @@ func (r *QueryResult) GetString(key string) string {
 func (r *QueryResult) GetInt64(key string) int64 {
 	rr, ok := r.dataMap[key]
 	if ok {
-		return rr.MustInt()
+		result, err := rr.ToInt()
+		if err != nil {
+			return -1
+		} else {
+			return result
+		}
 	} else {
 		return -1
 	}

@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"strconv"
 	"errors"
 	"log"
 )
@@ -60,10 +59,8 @@ func QueryMapsByAlias(alias string, sqlStr string, args ... interface{}) ([]*Que
 	for rows.Next() {
 		rMap := mappingToMap(rows)
 		r = append(r, rMap)
-		//rows.Close()
-		//log.Println(rMap)
 	}
-	rr := make([]*QueryResult, len(r))
+	rr := make([]*QueryResult, 0, len(r))
 	for _, v := range r {
 		rr = append(rr, &QueryResult{v})
 	}
@@ -92,7 +89,7 @@ func QueryMapByAlias(alias string, sql string, args ... interface{}) (*QueryResu
 	if len(r) == 0 {
 		return nil, errors.New("no data")
 	}
-	return &QueryResult{r[0]}, nil
+	return r[0], nil
 }
 
 //-------------------------------------
