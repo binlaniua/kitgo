@@ -48,7 +48,7 @@ func StringFirstLetterUpper(src string) string {
 //
 //-------------------------------------
 func StringTrim(src string) string {
-	return strings.Trim(src, " \n\r")
+	return strings.TrimSpace(src)
 }
 
 //-------------------------------------
