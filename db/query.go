@@ -59,8 +59,6 @@ func QueryMapsByAlias(alias string, sqlStr string, args ... interface{}) ([]*Que
 	for rows.Next() {
 		rMap := mappingToMap(rows)
 		r = append(r, rMap)
-		//rows.Close()
-		//log.Println(rMap)
 	}
 	rr := make([]*QueryResult, 0, len(r))
 	for _, v := range r {
