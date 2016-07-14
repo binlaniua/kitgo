@@ -3,6 +3,7 @@ package kitgo
 import (
 	"strconv"
 	"github.com/axgle/mahonia"
+	"math"
 )
 
 var (
@@ -79,4 +80,14 @@ func ConvertToFloat(src string) (float64, error) {
 func ConvertMustFloat(src string) float64 {
 	r, _ := ConvertToFloat(src)
 	return r
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func toFixed(src float64, n int) float64 {
+	pow10_n := math.Pow10(n)
+	return math.Trunc((src / pow10_n) * pow10_n) / pow10_n
 }
