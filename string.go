@@ -11,7 +11,7 @@ import (
 // 正则切割
 //
 //-------------------------------------
-func StringSplitByRegexp(src string, reg string) []string  {
+func StringSplitByRegexp(src string, reg string) []string {
 	pattern := regexp.MustCompile(reg)
 	indexes := pattern.FindAllStringIndex(src, -1)
 	laststart := 0
@@ -127,6 +127,16 @@ func StringMatch(src string, p string, group int) (string, error) {
 			return "", errors.New("匹配失败")
 		}
 	}
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func StringReplace(src string, p string, r string) string {
+	rp := regexp.MustCompile(p)
+	return rp.ReplaceAllString(src, r)
 }
 
 //-------------------------------------
