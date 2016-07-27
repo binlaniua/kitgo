@@ -16,6 +16,7 @@ import (
 	"crypto/tls"
 	"github.com/binlaniua/kitgo/file"
 	"errors"
+	"compress/gzip"
 )
 
 type HttpClient struct {
@@ -309,6 +310,25 @@ func (c *HttpClient) PostFile(urlStr string, dataMap map[string]interface{}) (*H
 	}
 	req, _ := http.NewRequest("POST", urlStr, buff)
 	req.Header.Add("Content-Type", write.FormDataContentType())
+	return c.doRequest(req)
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func (c *HttpClient) PostGzip(urlString string, data string) (*HttpResult, error) {
+	var b bytes.Buffer
+	w, _ := gzip.NewWriterLevel(&b, gzip.NoCompression)
+	defer w.Close()
+	_, err  := w.Write([]byte(data))
+	if err != nil {
+		return nil, err
+	}
+	w.Flush()
+	req, _ := http.NewRequest("POST", urlString, &b)
+	req.Header.Add("Content-Encoding", "gzip")
 	return c.doRequest(req)
 }
 

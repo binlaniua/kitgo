@@ -88,6 +88,7 @@ func ConvertMustFloat(src string) float64 {
 //
 //-------------------------------------
 func ToFixed(src float64, n int) float64 {
-	pow10_n := math.Pow10(n)
-	return math.Trunc((src / pow10_n) * pow10_n) / pow10_n
+	o := math.Pow(10, float64(n))
+	r := float64(int(src * o)) / o
+	return r
 }

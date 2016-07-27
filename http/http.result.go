@@ -54,14 +54,9 @@ func (hr *HttpResult) readBody() {
 //
 //
 //-------------------------------------
-func (hr *HttpResult) ToJson(data interface{}) bool {
+func (hr *HttpResult) ToJson(data interface{}) error {
 	err := json.Unmarshal(hr.Body, data)
-	if err != nil {
-		//kitgo.Log(hr.Url, " 转换JSON失败 => ", err);
-		return false
-	} else {
-		return true
-	}
+	return err
 }
 
 //-------------------------------------

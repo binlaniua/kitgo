@@ -64,11 +64,11 @@ func StringBetween(src string, start string, end string) (string, bool) {
 		if eI > 0 {
 			return src[:eI], true
 		} else {
-			Log(src, "开始位置[", end, "]没有找到")
+			//Log(src, "开始位置[", end, "]没有找到")
 			return src, false
 		}
 	} else {
-		Log(src, "开始位置[", start, "]没有找到")
+		//Log(src, "开始位置[", start, "]没有找到")
 		return "", false
 	}
 }

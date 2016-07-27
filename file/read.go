@@ -46,22 +46,38 @@ func ReadString(filePath string) (string, error) {
 //
 //-------------------------------------
 func ReadLines(filePath string) ([]string, error) {
+	r := []string{}
+	e := ReadLinesExt(filePath, func(line string) bool {
+		r = append(r, line)
+		return true
+	})
+	return r, e
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func ReadLinesExt(filePath string, fn func(line string) bool) (error) {
 	f, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer f.Close()
 	rd := bufio.NewReader(f)
-	r := make([]string, 0)
 	for {
 		line, err := rd.ReadString('\n')
 		if err != nil || io.EOF == err {
 			break
 		}
 		line = line[:len(line) - 1]
-		r = append(r, line)
+		r := fn(line)
+		if !r {
+			break
+		}
 	}
-	return r, nil
+	return nil
 }
 
 //-------------------------------------
@@ -103,3 +119,4 @@ func LoadJsonFile(filePath string, obj interface{}) error {
 func LoadProperties(filePath string) bool {
 	return false
 }
+
