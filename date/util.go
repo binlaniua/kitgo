@@ -23,13 +23,36 @@ func NowDateStrExt(join string) string {
 
 //-------------------------------------
 //
+// 获取当前小时
+//
+//-------------------------------------
+func GetHour() int {
+	n := time.Now()
+	r := n.Format("15")
+	h, _ := strconv.Atoi(r)
+	return h
+}
+
+//-------------------------------------
+//
+// 获取当前分钟
+//
+//-------------------------------------
+func GetMinute() int {
+	n := time.Now()
+	r := n.Format("04")
+	h, _ := strconv.Atoi(r)
+	return h
+}
+
+//-------------------------------------
+//
 //
 //
 //-------------------------------------
 func NowDateTimeStr() string {
 	return NowDateTimeStrExt("-", ":")
 }
-
 
 func NowDateTimeStrExt(dateJoin string, timeJoin string) string {
 	n := time.Now()
