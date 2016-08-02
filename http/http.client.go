@@ -283,6 +283,17 @@ func (c *HttpClient) PostJson(urlStr string, data interface{}) (*HttpResult, err
 //
 //
 //-------------------------------------
+func (c *HttpClient) PostString(urlStr string, body string) (*HttpResult, error) {
+	req, _ := http.NewRequest("POST", urlStr, bytes.NewBufferString(body))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+	return c.doRequest(req)
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
 func (c *HttpClient) PostXMLString(urlStr string, src string) (*HttpResult, error) {
 	req, _ := http.NewRequest("POST", urlStr, bytes.NewBuffer([]byte(src)))
 	req.Header.Add("Content-Type", "application/xml;charset=utf-8")
@@ -322,7 +333,7 @@ func (c *HttpClient) PostGzip(urlString string, data string) (*HttpResult, error
 	var b bytes.Buffer
 	w, _ := gzip.NewWriterLevel(&b, gzip.NoCompression)
 	defer w.Close()
-	_, err  := w.Write([]byte(data))
+	_, err := w.Write([]byte(data))
 	if err != nil {
 		return nil, err
 	}
