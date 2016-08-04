@@ -4,6 +4,7 @@ import (
 	"net"
 	"bufio"
 	"io"
+	"encoding/binary"
 )
 
 //-------------------------------------
@@ -11,7 +12,7 @@ import (
 // 按行写入, 按行读取
 //
 //-------------------------------------
-type LineConnection struct {
+type TcpConnection struct {
 	conn net.Conn
 	buf  *bufio.Reader
 }
@@ -21,8 +22,8 @@ type LineConnection struct {
 //
 //
 //-------------------------------------
-func NewLineConnection(conn net.Conn) *LineConnection {
-	c := &LineConnection{
+func NewLineConnection(conn net.Conn) *TcpConnection {
+	c := &TcpConnection{
 		conn,
 		bufio.NewReader(conn),
 	}
@@ -34,12 +35,33 @@ func NewLineConnection(conn net.Conn) *LineConnection {
 // 读取, 自动移除\n
 //
 //-------------------------------------
-func (c *LineConnection) Read() (string, error) {
+func (c *TcpConnection) ReadLine() (string, error) {
 	line, err := c.buf.ReadString('\n')
-	if err == io.EOF || err == nil {
-		return line, nil
+	return line, err
+}
+
+//-------------------------------------
+//
+// 读取对象
+//
+//-------------------------------------
+func (c *TcpConnection) ReadObject(obj interface{}) (error) {
+	err := binary.Read(c.conn, binary.LittleEndian, obj)
+	return err;
+}
+
+//-------------------------------------
+//
+// 读取固定行数
+//
+//-------------------------------------
+func (c *TcpConnection) ReadLength(size int) ([]byte, error) {
+	buff := make([]byte, size)
+	size, err := c.conn.Read(buff)
+	if err != nil {
+		return nil, err
 	} else {
-		return line, err
+		return buff[0: size], nil
 	}
 }
 
@@ -48,7 +70,7 @@ func (c *LineConnection) Read() (string, error) {
 // 写入, 自动加\n
 //
 //-------------------------------------
-func (c *LineConnection) Write(src string) (error) {
+func (c *TcpConnection) Write(src string) (error) {
 	buff := []byte(src + "\n")
 	_, err := c.conn.Write(buff)
 	return err
@@ -59,7 +81,7 @@ func (c *LineConnection) Write(src string) (error) {
 // 关闭
 //
 //-------------------------------------
-func (c *LineConnection) Close() {
+func (c *TcpConnection) Close() {
 	c.conn.Close()
 }
 
