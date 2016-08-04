@@ -3,7 +3,6 @@ package tcp
 import (
 	"net"
 	"bufio"
-	"io"
 	"encoding/binary"
 )
 
@@ -67,13 +66,22 @@ func (c *TcpConnection) ReadLength(size int) ([]byte, error) {
 
 //-------------------------------------
 //
-// 写入, 自动加\n
+// 写入
 //
 //-------------------------------------
 func (c *TcpConnection) Write(src string) (error) {
-	buff := []byte(src + "\n")
+	buff := []byte(src)
 	_, err := c.conn.Write(buff)
 	return err
+}
+
+//-------------------------------------
+//
+// 写入一行
+//
+//-------------------------------------
+func (c *TcpConnection) WriteLine(src string) (error) {
+	return c.Write(src + "\n")
 }
 
 //-------------------------------------
