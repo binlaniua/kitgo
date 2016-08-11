@@ -6,8 +6,8 @@ import (
 )
 
 var (
-	DebugLog log.Logger
-	ErrorLog log.Logger
+	DebugLog *log.Logger
+	ErrorLog *log.Logger
 )
 
 func init() {
