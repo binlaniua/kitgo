@@ -4,9 +4,6 @@ import (
 	"strconv"
 	"github.com/axgle/mahonia"
 	"math"
-	"fmt"
-	"bytes"
-	"encoding/binary"
 )
 
 var (
