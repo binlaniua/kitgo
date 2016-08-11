@@ -1,4 +1,4 @@
-package tcp
+package reader
 
 import (
 	"net"
@@ -12,8 +12,9 @@ import (
 //
 //-------------------------------------
 type TcpConnection struct {
-	conn net.Conn
-	buf  *bufio.Reader
+	conn  net.Conn
+	order binary.ByteOrder
+	buf   *bufio.Reader
 }
 
 //-------------------------------------
@@ -21,9 +22,10 @@ type TcpConnection struct {
 //
 //
 //-------------------------------------
-func NewLineConnection(conn net.Conn) *TcpConnection {
+func NewLineConnection(conn net.Conn, order binary.ByteOrder) *TcpConnection {
 	c := &TcpConnection{
 		conn,
+		order,
 		bufio.NewReader(conn),
 	}
 	return c
@@ -45,7 +47,7 @@ func (c *TcpConnection) ReadLine() (string, error) {
 //
 //-------------------------------------
 func (c *TcpConnection) ReadObject(obj interface{}) (error) {
-	err := binary.Read(c.conn, binary.LittleEndian, obj)
+	err := binary.Read(c.conn, c.order, obj)
 	return err;
 }
 

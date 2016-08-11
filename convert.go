@@ -4,6 +4,9 @@ import (
 	"strconv"
 	"github.com/axgle/mahonia"
 	"math"
+	"fmt"
+	"bytes"
+	"encoding/binary"
 )
 
 var (
@@ -64,7 +67,7 @@ func ConvertMustInt(src string) int {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func ConvertToFloat(src string) (float64, error) {
@@ -91,4 +94,47 @@ func ToFixed(src float64, n int) float64 {
 	o := math.Pow(10, float64(n))
 	r := float64(int(src * o)) / o
 	return r
+}
+
+//-------------------------------------
+//
+//  int 转 二进制
+//
+//-------------------------------------
+func IntToBinary(n int) string {
+	return fmt.Printf("%08b", n)
+}
+
+//-------------------------------------
+//
+// 二进制转 int
+//
+//-------------------------------------
+func BinaryToInt(src string) int {
+	r, _ := strconv.ParseInt(src, 2, 32)
+	return r
+}
+
+//-------------------------------------
+//
+// 高位
+//
+//-------------------------------------
+func IntToBytes(n int) []byte {
+	m := int32(n)
+	bytesBuffer := bytes.NewBuffer([]byte{})
+	binary.Write(bytesBuffer, binary.BigEndian, m)
+	return bytesBuffer.Bytes()
+}
+
+//-------------------------------------
+//
+//  高位
+//
+//-------------------------------------
+func BytesToInt(src []byte) int {
+	bytesBuffer := bytes.NewBuffer(src)
+	var x int32
+	binary.Read(bytesBuffer, binary.BigEndian, &x)
+	return int(x)
 }
