@@ -27,7 +27,7 @@ func ConvertGBToUTF(src string) string {
 //
 //
 //-------------------------------------
-func ConvertFromUnicode(src string) (string, bool) {
+func ConvertUnicode(src string) (string, bool) {
 	str, err := strconv.Unquote(`"` + src + `"`)
 	if err != nil {
 		Log(src, " 转换到中文失败 => ", err)
@@ -96,45 +96,3 @@ func ToFixed(src float64, n int) float64 {
 	return r
 }
 
-//-------------------------------------
-//
-//  int 转 二进制
-//
-//-------------------------------------
-func IntToBinary(n int) string {
-	return fmt.Printf("%08b", n)
-}
-
-//-------------------------------------
-//
-// 二进制转 int
-//
-//-------------------------------------
-func BinaryToInt(src string) int {
-	r, _ := strconv.ParseInt(src, 2, 32)
-	return r
-}
-
-//-------------------------------------
-//
-// 高位
-//
-//-------------------------------------
-func IntToBytes(n int) []byte {
-	m := int32(n)
-	bytesBuffer := bytes.NewBuffer([]byte{})
-	binary.Write(bytesBuffer, binary.BigEndian, m)
-	return bytesBuffer.Bytes()
-}
-
-//-------------------------------------
-//
-//  高位
-//
-//-------------------------------------
-func BytesToInt(src []byte) int {
-	bytesBuffer := bytes.NewBuffer(src)
-	var x int32
-	binary.Read(bytesBuffer, binary.BigEndian, &x)
-	return int(x)
-}

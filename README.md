@@ -1,68 +1,105 @@
 # 依赖
 ```
-go get github.com/tealeg/xlsx
-go get github.com/extrame/xls
-go get github.com/howeyc/fsnotify
 go get github.com/axgle/mahonia
 ```
-## convert 转换
-```
-FromUnicode(src)    转换unicode到中文
-ToInt(src)          转换到数字
-GBToUTF(src)        Gb格式转换为UTF-8
-```
 
-## config 配置
+## 
 ```
-Log(...)            获取开发环境打日志
-```
+kitgo.ConvertGBToUTF(string) 			Gb格式转换为UTF-8
+kitgo.ConvertUnicode(string)    		转换unicode到中文
+kitgo.ConvertToInt(string)
+kitgo.ConvertToFloat(string)			
+kitgo.ToFixed(float32, int)				保留几位小数
 
-## excel xls | xlsx 操作
-```
-ReadCell(filePath, sheetIndex, rowIndex, cellIndex)     读取cell内容
-```
 
-## runtime 启动操作
-```
-WaitExitSignal()    等待退出信号
-```
+kitgo.MapGetString(map[string]interface{}, string)
+kitgo.MapGetInt64(map[string]interface{}, string)
 
-## file 文件
-```
-ReadString(arg)     读取整个文件
-ReadBytes(arg)      读取整个文件
-ReadLines(arg)      按行读取文件
-WriteString(arg)    写入整个文件
-```
 
-## http http请求
-```
-HttpGet(url)            
-HttpGetReply(url, time)
-HttpPostFrom(url, map)
-HttpPostJson(url, data)
-HttpPostFile(url, data)
-```
+kitgo.WaitExitSignal()					等待退出信号
+kitgo.RuntimePath()						运行目录
+kitgo.ExceptionCatch()					捕获异常
+kitgo.RunDaemon()						守护进程启动
+kitgo.Restart()							重启
 
-## mail 发邮件
-```
-```
-
-## security 加解密
-```
-Guid()
-Md5(s)
-MD5WithSalt(s, salt)
 ```
 
 ## string 字符串操作
 ```
-FirstLetterLower(src)       首字母小写
-FirstLetterUpper(src)       首字母大写
-Trim(src)                   去首尾空格
-Between(src, start, end)    取start, end中间的
-StartWith(src, s)           是否s开头
-After(src, s)               从s开始截取
-Before(src, s)              截取到s的位置
-LeftPad(src, length, pad)   填充
+kitgo.StringFirstLetterLower(src)       首字母小写
+kitgo.StringFirstLetterUpper(src)       首字母大写
+kitgo.StringTrim(src)                   去首尾空格
+kitgo.StringBetween(src, start, end)    取start, end中间的
+kitgo.StringStartWith(src, s)           是否s开头
+kitgo.StringAfter(src, s)               从s开始截取
+kitgo.StringBefore(src, s)              截取到s的位置
+kitgo.StringMatch(src, reg, group)		正则捕获组
+kitgo.StringReplace(src, reg, s)		正则替换
+kitgo.StringLeftPad(src, length, pad)   填充
+StringSplitByRegexp(src, reg)			按正则分隔字符串
+
+```
+
+## zip
+```
+zip.ZipDir(src, filePath)				压缩目录
+```
+
+## security
+```
+security.AESEncrypt
+security.AESDecrypt
+
+security.ToBase64
+security.FromBase64
+
+security.DesEncrypt
+security.DesDecrypt
+
+security.MD5
+security.MD5WithSalt
+security.MD5Map
+
+security.SHA1
+security.SHA1Map
+```
+
+## file
+```
+file.ReadBytes(filePath)
+file.ReadString(filePath)
+file.ReadLines(filePath)
+file.LoadJsonFile(filePath, interface{})
+file.ListFilePaths(dirPath)
+file.WriteString(filePath, string)
+file.WriteBytes(filePath, []byte)
+```
+
+## db (只有mysql)
+```
+db.Connect()
+db.ConnectAsAlias()
+db.GetDB()
+db.GetDBByAlias()
+db.Insert()
+db.InsertByAlias()
+db.HasData()
+db.HasDataByAlias()
+db.QueryMaps()
+db.QueryMapsByAlias()
+db.QueryMap()
+db.QueryMapByAlias()
+db.Query()
+db.QueryByAlias()
+db.Update()
+db.UpdateByAlias()
+```
+
+## http (支持 http/https/socks5 代理)
+```
+http.HttpGet()
+http.HttpPostFrom()
+http.HttpPost()
+http.HttpPostJson()
+http.HttpPostFile()
 ```

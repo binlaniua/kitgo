@@ -11,7 +11,7 @@ import (
 //
 //
 //-------------------------------------
-func Dir(dir string, dist string) error {
+func ZipDir(dir string, dist string) error {
 	f, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return err

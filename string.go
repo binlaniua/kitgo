@@ -152,9 +152,3 @@ func StringLeftPad(src string, length int, pad string) string {
 	}
 	return src
 }
-
-//-------------------------------------
-//
-// 
-//
-//-------------------------------------

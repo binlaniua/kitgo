@@ -110,13 +110,3 @@ func LoadJsonFile(filePath string, obj interface{}) error {
 	}
 	return nil
 }
-
-//-------------------------------------
-//
-//  读取配置文件
-//
-//-------------------------------------
-func LoadProperties(filePath string) bool {
-	return false
-}
-
