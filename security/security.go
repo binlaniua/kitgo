@@ -1,11 +1,9 @@
 package security
 
 import (
-	"encoding/hex"
 	"io"
 	"crypto/rand"
 	"encoding/base64"
-	"crypto/sha1"
 )
 
 //-------------------------------------
@@ -23,13 +21,4 @@ func Guid() string {
 
 
 
-//-------------------------------------
-//
-//
-//
-//-------------------------------------
-func SHA1(s string) string {
-	t := sha1.New();
-	io.WriteString(t, s);
-	return hex.EncodeToString(t.Sum(nil))
-}
+

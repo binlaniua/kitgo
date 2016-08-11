@@ -1,23 +1,23 @@
 package security
 
 import (
-	"crypto/md5"
+	"crypto/sha1"
+	"io"
 	"encoding/hex"
 	"sort"
-	"strings"
 	"fmt"
+	"strings"
 )
 
-
 //-------------------------------------
 //
 //
 //
 //-------------------------------------
-func MD5(s string) string {
-	h := md5.New()
-	h.Write([]byte(s))
-	return hex.EncodeToString(h.Sum(nil))
+func SHA1(s string) []byte {
+	t := sha1.New();
+	io.WriteString(t, s);
+	return t.Sum(nil)
 }
 
 //-------------------------------------
@@ -25,17 +25,16 @@ func MD5(s string) string {
 //
 //
 //-------------------------------------
-func MD5WithSalt(s string, salt string) string {
-	salt = MD5(salt)
-	return MD5(s + salt);
+func SHA1Hex(s string) string  {
+	return hex.EncodeToString(SHA1(s))
 }
 
 //-------------------------------------
 //
-// 有序MD5加密
+//
 //
 //-------------------------------------
-func MD5Map(m map[string]string, joinStr string, other ... string) string {
+func SHA1Map(m map[string]string, joinStr string, other ... string) string {
 	//1 排序
 	kList := make([]string, 0, len(m))
 	for k, _ := range m {
@@ -57,9 +56,7 @@ func MD5Map(m map[string]string, joinStr string, other ... string) string {
 			allStr = allStr + otherItem
 		}
 	}
-
 	//4. 大写加密
-	r := strings.ToUpper(MD5(allStr))
+	r := strings.ToUpper(SHA1Hex(allStr))
 	return r
 }
-
