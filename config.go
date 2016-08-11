@@ -2,14 +2,17 @@ package kitgo
 
 import (
 	"log"
+	"os"
 )
 
 var (
-	Debug = true
+	DebugLog log.Logger
+	ErrorLog log.Logger
 )
 
 func init() {
-	log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
+	DebugLog = log.New(os.Stdout, "", log.Ltime | log.Ldate | log.Llongfile)
+	ErrorLog = log.New(os.Stderr, "", log.Ltime | log.Ldate | log.Llongfile)
 }
 
 //-------------------------------------
@@ -18,9 +21,6 @@ func init() {
 //
 //-------------------------------------
 func Log(args ... interface{}) {
-	if Debug {
-		log.Println(args)
-	}
 }
 
 //-------------------------------------
@@ -29,8 +29,5 @@ func Log(args ... interface{}) {
 //
 //-------------------------------------
 func LogF(f string, args ... interface{}) {
-	if Debug {
-		log.Panicf(f, args...)
-	}
 }
 
