@@ -1,4 +1,4 @@
-package reader
+package kitgo
 
 import (
 	"net"
@@ -22,7 +22,7 @@ type TcpConnection struct {
 //
 //
 //-------------------------------------
-func NewLineConnection(conn net.Conn, order binary.ByteOrder) *TcpConnection {
+func NewTcpConnection(conn net.Conn, order binary.ByteOrder) *TcpConnection {
 	c := &TcpConnection{
 		conn,
 		order,
@@ -62,7 +62,7 @@ func (c *TcpConnection) ReadLength(size int) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	} else {
-		return buff[0: size], nil
+		return buff[:size], nil
 	}
 }
 

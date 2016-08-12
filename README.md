@@ -103,3 +103,8 @@ http.HttpPost()
 http.HttpPostJson()
 http.HttpPostFile()
 ```
+
+## net
+```
+kitgo.TcpConnection
+```
