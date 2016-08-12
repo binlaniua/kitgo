@@ -11,7 +11,7 @@ import (
 // 按行写入, 按行读取
 //
 //-------------------------------------
-type TcpConnection struct {
+type TcpClient struct {
 	conn  net.Conn
 	order binary.ByteOrder
 	buf   *bufio.Reader
@@ -22,8 +22,8 @@ type TcpConnection struct {
 //
 //
 //-------------------------------------
-func NewTcpConnection(conn net.Conn, order binary.ByteOrder) *TcpConnection {
-	c := &TcpConnection{
+func NewTcpConnection(conn net.Conn, order binary.ByteOrder) *TcpClient {
+	c := &TcpClient{
 		conn,
 		order,
 		bufio.NewReader(conn),
@@ -36,7 +36,7 @@ func NewTcpConnection(conn net.Conn, order binary.ByteOrder) *TcpConnection {
 // 读取, 自动移除\n
 //
 //-------------------------------------
-func (c *TcpConnection) ReadLine() (string, error) {
+func (c *TcpClient) ReadLine() (string, error) {
 	line, err := c.buf.ReadString('\n')
 	return line, err
 }
@@ -46,7 +46,7 @@ func (c *TcpConnection) ReadLine() (string, error) {
 // 读取对象
 //
 //-------------------------------------
-func (c *TcpConnection) ReadObject(obj interface{}) (error) {
+func (c *TcpClient) ReadObject(obj interface{}) (error) {
 	err := binary.Read(c.conn, c.order, obj)
 	return err;
 }
@@ -56,7 +56,7 @@ func (c *TcpConnection) ReadObject(obj interface{}) (error) {
 // 读取固定行数
 //
 //-------------------------------------
-func (c *TcpConnection) ReadLength(size int) ([]byte, error) {
+func (c *TcpClient) ReadLength(size int) ([]byte, error) {
 	buff := make([]byte, size)
 	size, err := c.conn.Read(buff)
 	if err != nil {
@@ -71,7 +71,7 @@ func (c *TcpConnection) ReadLength(size int) ([]byte, error) {
 // 写入
 //
 //-------------------------------------
-func (c *TcpConnection) Write(src string) (error) {
+func (c *TcpClient) Write(src string) (error) {
 	buff := []byte(src)
 	_, err := c.conn.Write(buff)
 	return err
@@ -82,7 +82,7 @@ func (c *TcpConnection) Write(src string) (error) {
 // 写入一行
 //
 //-------------------------------------
-func (c *TcpConnection) WriteLine(src string) (error) {
+func (c *TcpClient) WriteLine(src string) (error) {
 	return c.Write(src + "\n")
 }
 
@@ -91,7 +91,7 @@ func (c *TcpConnection) WriteLine(src string) (error) {
 // 关闭
 //
 //-------------------------------------
-func (c *TcpConnection) Close() {
+func (c *TcpClient) Close() {
 	c.conn.Close()
 }
 
