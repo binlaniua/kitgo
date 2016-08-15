@@ -5,13 +5,16 @@ import (
 	"fmt"
 	"log"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/binlaniua/kitgo"
 )
 
 //
 // 所有应用共享实例
 //
-var DBMap map[string]*sql.DB = make(map[string]*sql.DB)
-var DEFAULT_DB_NAME = "___default"
+const (
+	DBMap map[string]*sql.DB = make(map[string]*sql.DB)
+	DEFAULT_DB_NAME = "___default"
+)
 
 //-------------------------------------
 //
@@ -31,13 +34,13 @@ func ConnectAsAlias(alias, host, port, user, password, database string) *sql.DB 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", user, password, host, port, database)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		log.Panic("打开连接错误 => ", dsn, err)
+		kitgo.ErrorLog.Panic("打开连接错误 => ", dsn, err)
 	}
 	db.SetMaxOpenConns(200)
 	db.SetMaxIdleConns(100)
 	err = db.Ping()
 	if err != nil {
-		log.Println("打开连接错误 => ", dsn, err)
+		kitgo.ErrorLog.Panic("打开连接错误 => ", dsn, err)
 	}
 	DBMap[alias] = db
 	return db

@@ -73,13 +73,3 @@ func ListFilePaths(dir string) ([]string, error) {
 	}
 	return lf, nil
 }
-
-//-------------------------------------
-//
-//
-//
-//-------------------------------------
-func AppendFile(filePath string) (*os.File, error) {
-	file, err := os.OpenFile(filePath, os.O_APPEND | os.O_CREATE, 0644)
-	return file, err
-}

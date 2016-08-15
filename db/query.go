@@ -109,6 +109,11 @@ func QueryByAlias(alias string, sqlStr string, args ... interface{}) (*sql.Rows,
 	return r, e
 }
 
+//-------------------------------------
+//
+// 
+//
+//-------------------------------------
 func Query(sqlStr string, args ... interface{}) (*sql.Rows, error) {
 	return QueryByAlias(DEFAULT_DB_NAME, sqlStr, args...)
 }
