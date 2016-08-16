@@ -11,8 +11,11 @@ import (
 //
 // 所有应用共享实例
 //
-const (
+var (
 	DBMap map[string]*sql.DB = make(map[string]*sql.DB)
+)
+
+const (
 	DEFAULT_DB_NAME = "___default"
 )
 

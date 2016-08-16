@@ -28,3 +28,18 @@ func MapGetInt64(m map[string]interface{}, k string) int64 {
 		return -1
 	}
 }
+
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func MapGetBool(m map[string]interface{}, k string) bool {
+	r, ok := m[k]
+	if ok {
+		return r.(bool)
+	} else {
+		return false
+	}
+}

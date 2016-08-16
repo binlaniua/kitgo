@@ -110,3 +110,14 @@ func LoadJsonFile(filePath string, obj interface{}) error {
 	}
 	return nil
 }
+
+//-------------------------------------
+//
+// 
+//
+//-------------------------------------
+func LoadJsonFileToMap(filePath string) (map[string]interface{}, error) {
+	m := map[string]interface{}{}
+	e := LoadJsonFile(filePath, &m)
+	return m, e
+}
