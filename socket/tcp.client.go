@@ -1,4 +1,4 @@
-package kitgo
+package socket
 
 import (
 	"net"
