@@ -19,9 +19,9 @@ type UdpServer struct {
 //
 //
 //-------------------------------------
-func NewUdpServer(address string) *UdpServer {
+func NewUdpServer(addressString string) *UdpServer {
 	server := &UdpServer{}
-	address, err := net.ResolveUDPAddr("udp4", address)
+	address, err := net.ResolveUDPAddr("udp4", addressString)
 	if err != nil {
 		kitgo.ErrorLog.Fatalln(address, "启动失败 => ", err);
 	}
