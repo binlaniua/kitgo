@@ -39,8 +39,8 @@ func NewUdpServer(addressString string) *UdpServer {
 //-------------------------------------
 func (us *UdpServer) ReadLength(size int64) ([]byte, *net.UDPAddr, error) {
 	buff := make([]byte, size)
-	size, addr, err := us.server.ReadFromUDP(buff)
-	return buff[:size], addr, err
+	readSize, addr, err := us.server.ReadFromUDP(buff)
+	return buff[:readSize], addr, err
 }
 
 //-------------------------------------
