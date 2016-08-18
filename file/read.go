@@ -47,7 +47,7 @@ func ReadString(filePath string) (string, error) {
 //-------------------------------------
 func ReadLines(filePath string) ([]string, error) {
 	r := []string{}
-	e := ReadLinesExt(filePath, func(line string) bool {
+	e := ReadLinesExt(filePath, func(line string, row int64) bool {
 		r = append(r, line)
 		return true
 	})
@@ -59,20 +59,22 @@ func ReadLines(filePath string) ([]string, error) {
 //
 //
 //-------------------------------------
-func ReadLinesExt(filePath string, fn func(line string) bool) (error) {
+func ReadLinesExt(filePath string, fn func(string, int64) bool) (error) {
 	f, err := os.Open(filePath)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 	rd := bufio.NewReader(f)
+	row := 0
 	for {
+		row ++
 		line, err := rd.ReadString('\n')
 		if err != nil || io.EOF == err {
 			break
 		}
 		line = line[:len(line) - 1]
-		r := fn(line)
+		r := fn(line, int64(row))
 		if !r {
 			break
 		}
