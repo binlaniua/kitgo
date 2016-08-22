@@ -8,6 +8,17 @@ import (
 
 //-------------------------------------
 //
+//
+//
+//-------------------------------------
+func StringIgnoreEquals(src string, dest string) bool {
+	src = strings.ToLower(src)
+	dest = strings.ToLower(dest)
+	return src == dest
+}
+
+//-------------------------------------
+//
 // 正则切割
 //
 //-------------------------------------
