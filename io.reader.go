@@ -6,6 +6,7 @@ import (
 	"math"
 	"bytes"
 	"io/ioutil"
+	"errors"
 )
 
 //-------------------------------------
@@ -48,7 +49,7 @@ func NewReaderByByte(byteList []byte, order binary.ByteOrder) *Reader {
 func (rd *Reader) ReadByte() (byte, error) {
 	byteList, err := rd.ReadBytes(1)
 	if err != nil || len(byteList) == 0 {
-		return -1, err
+		return 0, err
 	} else {
 		return byteList[0], nil
 	}
@@ -62,11 +63,10 @@ func (rd *Reader) ReadByte() (byte, error) {
 func (rd *Reader) ReadBytes(size int) ([]byte, error) {
 	buffer := make([]byte, size)
 	if size, err := rd.reader.Read(buffer); err != nil {
-		return "", err
+		return nil, err
 	} else {
 		return buffer[:size], nil
 	}
-
 }
 
 //-------------------------------------
@@ -74,7 +74,7 @@ func (rd *Reader) ReadBytes(size int) ([]byte, error) {
 //
 //
 //-------------------------------------
-func (rd *Reader) ReadString(len int, isTrim bool) (string, error) {
+func (rd *Reader) ReadStringByLength(len int, isTrim bool) (string, error) {
 	buffer := make([]byte, len)
 	if rl, err := rd.reader.Read(buffer); err != nil {
 		return "", err
@@ -85,6 +85,26 @@ func (rd *Reader) ReadString(len int, isTrim bool) (string, error) {
 		}
 		return result, err
 	}
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func (rd *Reader) ReadStringByEndPoint(char byte) (string, error) {
+	byteList := []byte{}
+	for {
+		byteData, err := rd.ReadByte()
+		if err != nil {
+			return "", err
+		} else if byteData == char {
+			return string(byteList), nil
+		} else {
+			byteList = append(byteList, byteData)
+		}
+	}
+	return "", errors.New("no data")
 }
 
 //-------------------------------------
@@ -153,7 +173,8 @@ func (rd *Reader)ReadInt32() (int32, error) {
 //
 //-------------------------------------
 func (rd *Reader)ReadInt() (int, error) {
-	return rd.ReadInt32()
+	r, err := rd.ReadInt32()
+	return int(r), err
 }
 
 //-------------------------------------
