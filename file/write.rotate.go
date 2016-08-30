@@ -15,11 +15,11 @@ import (
 //
 //-------------------------------------
 type FileRotateOption struct {
-	docPath string //存放路径
-	suffix  string //后缀
-	prefix  string //前缀
-	format  string //格式
-	rotate  string //按什么时间分割
+	DocPath string //存放路径
+	Suffix  string //后缀
+	Prefix  string //前缀
+	Format  string //格式
+	Rotate  string //按什么时间分割
 }
 
 //-------------------------------------
@@ -28,11 +28,14 @@ type FileRotateOption struct {
 //
 //-------------------------------------
 func (f *FileRotateOption) merge() {
-	if f.format == "" {
-		f.format = "2006_01_02"
+	if f.Format == "" {
+		f.Format = "2006_01_02"
 	}
-	if f.rotate == "" {
-		f.rotate = "0 1 0 * * *"
+	if f.Rotate == "" {
+		f.Rotate = "0 1 0 * * *"
+	}
+	if f.Suffix == "" {
+		f.Suffix = ".log"
 	}
 }
 
@@ -70,7 +73,7 @@ func NewFileRotate(option *FileRotateOption) (*FileRotate, error) {
 	}
 
 	//按天
-	err := lr.job.AddFunc(option.rotate, func() {
+	err := lr.job.AddFunc(option.Rotate, func() {
 		log.Print("已触发....新建文件做log")
 		err := lr.reopen();
 		if err != nil {
@@ -98,8 +101,8 @@ func (lr *FileRotate) reopen() (err error) {
 
 	//新建文件
 	o := lr.option
-	fileName := time.Now().Format(o.format)
-	filePath := fmt.Sprintf("%s/%s%s%s", o.docPath, o.prefix, fileName, o.suffix)
+	fileName := time.Now().Format(o.Format)
+	filePath := fmt.Sprintf("%s/%s%s%s", o.DocPath, o.Prefix, fileName, o.Suffix)
 	lr.file, err = os.OpenFile(filePath, os.O_WRONLY | os.O_APPEND | os.O_CREATE, 0644)
 	return
 }

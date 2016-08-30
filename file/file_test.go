@@ -9,8 +9,8 @@ import (
 func Test_write_rotate(t *testing.T)  {
 	fr, err := NewFileRotate(&FileRotateOption{
 		docPath: "c:\\",
-		prefix: "si_",
-		suffix: "_error.log",
+		Prefix: "si_",
+		Suffix: "_error.log",
 		//rotate: "@every 1m",
 		//format: "2006_01_02_15_04",
 	})
