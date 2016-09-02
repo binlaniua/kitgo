@@ -45,6 +45,12 @@ StringSplitByRegexp(src, reg)			按正则分隔字符串
 zip.ZipDir(src, filePath)				压缩目录
 ```
 
+## lib  第三方扩展
+```
+lib.RedisSub(redisConn, channel, handle) 监听
+lib.RedisLRangeStrings(redisConn, key, start, end) LRange
+```
+
 ## security
 ```
 security.AESEncrypt
