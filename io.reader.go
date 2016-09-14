@@ -79,7 +79,12 @@ func (rd *Reader) ReadStringByLength(len int, isTrim bool) (string, error) {
 	if rl, err := rd.reader.Read(buffer); err != nil {
 		return "", err
 	} else {
-		result := string(buffer[:rl])
+		buffer = buffer[:rl]
+		n := bytes.Index(buffer, []byte{0})
+		if n != -1 {
+			buffer = buffer[:n]
+		}
+		result := string(buffer)
 		if isTrim {
 			result = StringReplace(result, "\u0000", "")
 		}
