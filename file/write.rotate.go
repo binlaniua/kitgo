@@ -4,9 +4,9 @@ import (
 	"sync"
 	"os"
 	"github.com/robfig/cron"
-	"github.com/labstack/gommon/log"
 	"fmt"
 	"time"
+	"log"
 )
 
 //-------------------------------------
@@ -77,7 +77,7 @@ func NewFileRotate(option *FileRotateOption) (*FileRotate, error) {
 		log.Print("已触发....新建文件做log")
 		err := lr.reopen();
 		if err != nil {
-			log.Error("重新打开文件失败 => ", err)
+			log.Fatal("重新打开文件失败 => ", err)
 		}
 	});
 	if err != nil {
