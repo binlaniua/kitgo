@@ -46,6 +46,15 @@ func NewReaderByByte(byteList []byte, order binary.ByteOrder) *Reader {
 //
 //
 //-------------------------------------
+func (rd *Reader) GetOrigin() io.Reader {
+	return rd.reader
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
 func (rd *Reader) ReadByte() (byte, error) {
 	byteList, err := rd.ReadBytes(1)
 	if err != nil || len(byteList) == 0 {
