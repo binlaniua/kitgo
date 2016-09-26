@@ -67,3 +67,7 @@ func (r *QueryResult) GetInt64(key string) int64 {
 func (r *QueryResult) GetInt(key string) int {
 	return int(r.GetInt64(key))
 }
+
+func (r *QueryResult) GetDataMap() map[string]*RowData {
+	return r.dataMap
+}
