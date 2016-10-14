@@ -30,6 +30,7 @@ type HttpClientOption struct {
 	Proxy         string
 	ProxySock5    string
 
+	NoSsl         bool
 	SSLKeyPath    string
 	SSLCertPath   string
 	SSLKeyData    []byte
@@ -115,6 +116,19 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 		if err != nil {
 			panic(err)
 			return nil
+		}
+	} else if o.NoSsl {
+		if c.Transport != nil {
+			t := c.Transport.(*http.Transport)
+			t.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+			hc.transport = t
+			c.Transport = t
+		} else {
+			tr := &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			}
+			hc.transport = tr
+			c.Transport = tr
 		}
 	}
 	if len(o.SSLKeyData) > 0 && len(o.SSLCertData) > 0 {
