@@ -48,11 +48,6 @@ func QueryMaps(sqlStr string, args ... interface{}) ([]*QueryResult, error) {
 	return QueryMapsByAlias(DEFAULT_DB_NAME, sqlStr, args...)
 }
 
-//-------------------------------------
-//
-//
-//
-//-------------------------------------
 func QueryMapsByAlias(alias string, sqlStr string, args ... interface{}) ([]*QueryResult, error) {
 	rows, err := QueryByAlias(alias, sqlStr, args...)
 	if err != nil {
@@ -80,11 +75,6 @@ func QueryMap(sql string, args ... interface{}) (*QueryResult, error) {
 	return QueryMapByAlias(DEFAULT_DB_NAME, sql, args...)
 }
 
-//-------------------------------------
-//
-//
-//
-//-------------------------------------
 func QueryMapByAlias(alias string, sql string, args ... interface{}) (*QueryResult, error) {
 	r, err := QueryMapsByAlias(alias, sql, args...)
 	if err != nil {
@@ -113,14 +103,39 @@ func QueryByAlias(alias string, sqlStr string, args ... interface{}) (*sql.Rows,
 	return r, e
 }
 
-//-------------------------------------
-//
-// 
-//
-//-------------------------------------
 func Query(sqlStr string, args ... interface{}) (*sql.Rows, error) {
 	return QueryByAlias(DEFAULT_DB_NAME, sqlStr, args...)
 }
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func QueryObjectByAlias(alias string, sqlStr string, obj interface{}, args ... interface{}) error {
+	db := GetDBByAlias(alias)
+	var r *sql.Rows
+	var e error
+	if len(args) == 0 || args == nil {
+		r, e = db.Query(sqlStr)
+	} else {
+		r, e = db.Query(sqlStr, args...)
+	}
+	if e != nil {
+		return e
+	}
+	defer r.Close()
+	r.Next();
+	ov := reflect.ValueOf(obj)
+	mappingToObject(r, ov)
+	return nil
+}
+
+func QueryObject(sqlStr string, obj interface{}, args ... interface{}) error {
+	return QueryObjectByAlias(DEFAULT_DB_NAME, sqlStr, obj, args...)
+}
+
+
 
 //-------------------------------------
 //
@@ -131,11 +146,6 @@ func QueryList(sqlStr string, result interface{}, args ... interface{}) error {
 	return QueryListByAlias(DEFAULT_DB_NAME, sqlStr, result, args...)
 }
 
-//-------------------------------------
-//
-//
-//
-//-------------------------------------
 func QueryListByAlias(alias string, sqlStr string, result interface{}, args ... interface{}) error {
 	db := GetDBByAlias(alias)
 	var r *sql.Rows
@@ -155,11 +165,13 @@ func QueryListByAlias(alias string, sqlStr string, result interface{}, args ... 
 	if e != nil {
 		return e
 	}
+	defer r.Close()
 
 	//
 	for r.Next() {
-		element := mappingToObject(r, resultElementType)
-		resultList.Set(reflect.Append(resultList, element))
+		newValue := reflect.New(resultElementType)
+		mappingToObject(r, newValue)
+		resultList.Set(reflect.Append(resultList, newValue))
 	}
 	return nil
 }
@@ -169,9 +181,8 @@ func QueryListByAlias(alias string, sqlStr string, result interface{}, args ... 
 //
 //
 //-------------------------------------
-func mappingToObject(row *sql.Rows, class reflect.Type) reflect.Value {
-	fieldMap := mappingFieldMap(class)
-	newValue := reflect.New(class)
+func mappingToObject(row *sql.Rows, newValue reflect.Value) {
+	fieldMap := mappingFieldMap(newValue.Elem().Type())
 	columns, _ := row.Columns()
 	values := make([]sql.RawBytes, len(columns))
 	scanArgs := make([]interface{}, len(values))
@@ -196,7 +207,6 @@ func mappingToObject(row *sql.Rows, class reflect.Type) reflect.Value {
 			}
 		}
 	}
-	return newValue
 }
 
 //-------------------------------------
