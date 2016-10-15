@@ -28,6 +28,15 @@ func (r *RowData) ToInt() (int64, error) {
 	return re, nil
 }
 
+func (r *RowData) ToInt32() (int, error) {
+	s := r.ToString()
+	re, err := strconv.Atoi(s)
+	if err != nil {
+		return 0, err
+	}
+	return re, nil
+}
+
 //-------------------------------------
 //
 //

@@ -4,9 +4,13 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"reflect"
+	"strings"
 )
 
-
+var (
+	dbFieldMap = map[reflect.Type]map[string]reflect.StructField{}
+)
 
 
 //-------------------------------------
@@ -101,7 +105,7 @@ func QueryByAlias(alias string, sqlStr string, args ... interface{}) (*sql.Rows,
 	db := GetDBByAlias(alias)
 	var r *sql.Rows
 	var e error
-	if len(args) == 0 {
+	if len(args) == 0 || args == nil {
 		r, e = db.Query(sqlStr)
 	} else {
 		r, e = db.Query(sqlStr, args...)
@@ -116,6 +120,105 @@ func QueryByAlias(alias string, sqlStr string, args ... interface{}) (*sql.Rows,
 //-------------------------------------
 func Query(sqlStr string, args ... interface{}) (*sql.Rows, error) {
 	return QueryByAlias(DEFAULT_DB_NAME, sqlStr, args...)
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func QueryList(sqlStr string, result interface{}, args ... interface{}) error {
+	return QueryListByAlias(DEFAULT_DB_NAME, sqlStr, result, args...)
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func QueryListByAlias(alias string, sqlStr string, result interface{}, args ... interface{}) error {
+	db := GetDBByAlias(alias)
+	var r *sql.Rows
+	var e error
+
+
+	//
+	resultList := reflect.Indirect(reflect.ValueOf(result))
+	resultElementType := resultList.Type().Elem().Elem()
+	if len(args) == 0 || args == nil {
+		r, e = db.Query(sqlStr)
+	} else {
+		r, e = db.Query(sqlStr, args...)
+	}
+
+	//
+	if e != nil {
+		return e
+	}
+
+	//
+	for r.Next() {
+		element := mappingToObject(r, resultElementType)
+		resultList.Set(reflect.Append(resultList, element))
+	}
+	return nil
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func mappingToObject(row *sql.Rows, class reflect.Type) reflect.Value {
+	fieldMap := mappingFieldMap(class)
+	newValue := reflect.New(class)
+	columns, _ := row.Columns()
+	values := make([]sql.RawBytes, len(columns))
+	scanArgs := make([]interface{}, len(values))
+	for i := range values {
+		scanArgs[i] = &values[i]
+	}
+	row.Scan(scanArgs...)
+	for i, col := range values {
+		field, ok := fieldMap[strings.ToLower(columns[i])]
+		if !ok {
+			continue
+		} else {
+			rowData := &RowData{col}
+			valueField := newValue.Elem().FieldByName(field.Name)
+			switch(field.Type.Kind()){
+			case reflect.Int:
+				r, _ := rowData.ToInt32()
+				valueField.Set(reflect.ValueOf(r))
+			case reflect.String:
+				valueField.Set(reflect.ValueOf(rowData.ToString()))
+			default:
+			}
+		}
+	}
+	return newValue
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func mappingFieldMap(class reflect.Type) map[string]reflect.StructField {
+	m, ok := dbFieldMap[class]
+	if ok {
+		return m
+	} else {
+		m := map[string]reflect.StructField{}
+		numCount := class.NumField()
+		for i := 0; i < numCount; i ++ {
+			field := class.Field(i)
+			dbName := strings.ToLower(field.Tag.Get("db"))
+			m[dbName] = field;
+		}
+		dbFieldMap[class] = m
+		return m
+	}
 }
 
 //-------------------------------------
