@@ -4,6 +4,7 @@ import (
 	"net"
 	"bufio"
 	"encoding/binary"
+	"io"
 )
 
 //-------------------------------------
@@ -58,7 +59,7 @@ func (c *TcpClient) ReadObject(obj interface{}) (error) {
 //-------------------------------------
 func (c *TcpClient) ReadLength(size int) ([]byte, error) {
 	buff := make([]byte, size)
-	size, err := c.conn.Read(buff)
+	size, err := io.ReadFull(c.conn, buff)
 	if err != nil {
 		return nil, err
 	} else {
