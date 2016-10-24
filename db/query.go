@@ -6,6 +6,8 @@ import (
 	"log"
 	"reflect"
 	"strings"
+	"github.com/binlaniua/kitgo"
+	"time"
 )
 
 var (
@@ -181,6 +183,10 @@ func QueryListByAlias(alias string, sqlStr string, result interface{}, args ... 
 //
 //
 //-------------------------------------
+var (
+	timeType = reflect.TypeOf(time.Time{})
+)
+
 func mappingToObject(row *sql.Rows, newValue reflect.Value) {
 	fieldMap := mappingFieldMap(newValue.Elem().Type())
 	columns, _ := row.Columns()
@@ -197,13 +203,23 @@ func mappingToObject(row *sql.Rows, newValue reflect.Value) {
 		} else {
 			rowData := &RowData{col}
 			valueField := newValue.Elem().FieldByName(field.Name)
-			switch(field.Type.Kind()){
+			switch (field.Type.Kind()){
 			case reflect.Int:
 				r, _ := rowData.ToInt32()
+				valueField.Set(reflect.ValueOf(r))
+			case reflect.Int64:
+				r, _ := rowData.ToInt()
 				valueField.Set(reflect.ValueOf(r))
 			case reflect.String:
 				valueField.Set(reflect.ValueOf(rowData.ToString()))
 			default:
+				if field.Type.ConvertibleTo(timeType) {
+					ts := rowData.ToString()
+					t, _ := time.Parse("2006-01-02 15:04:05", ts)
+					valueField.Set(reflect.ValueOf(t))
+				} else {
+					kitgo.ErrorLog.Print(field.Type.Kind(), field.Type, " 没有匹配的")
+				}
 			}
 		}
 	}
