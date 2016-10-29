@@ -6,6 +6,7 @@ import (
 	"log"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/binlaniua/kitgo"
+	"time"
 )
 
 //
@@ -34,7 +35,8 @@ func Connect(host, port, user, password, db string) *sql.DB {
 //
 //-------------------------------------
 func ConnectAsAlias(alias, host, port, user, password, database string) *sql.DB {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", user, password, host, port, database)
+	loc, _ := time.LoadLocation("Local")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&loc=%s", user, password, host, port, database, loc.String())
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		kitgo.ErrorLog.Panic("打开连接错误 => ", dsn, err)
