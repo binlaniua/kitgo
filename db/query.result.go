@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"strconv"
+	"encoding/json"
 )
 
 
@@ -44,6 +45,15 @@ func (r *RowData) ToInt32() (int, error) {
 //-------------------------------------
 type QueryResult struct {
 	dataMap map[string]*RowData
+}
+
+
+func (r *QueryResult) String() string {
+	if r.dataMap != nil {
+		j, _ := json.Marshal(r.dataMap)
+		return string(j)
+	}
+	return  "{}"
 }
 
 func (r *QueryResult) ConvertTo(target interface{}) bool {
