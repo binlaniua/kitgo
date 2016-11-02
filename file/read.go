@@ -70,8 +70,10 @@ func ReadLinesExt(filePath string, fn func(string, int64) bool) (error) {
 	for {
 		row ++
 		line, err := rd.ReadString('\n')
-		if err != nil || io.EOF == err {
-			break
+		if err != nil && io.EOF == err {
+			return nil
+		} else if err != nil {
+			return err
 		}
 		line = line[:len(line) - 1]
 		r := fn(line, int64(row))
