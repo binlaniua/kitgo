@@ -97,7 +97,7 @@ func QueryByAlias(alias string, sqlStr string, args ... interface{}) (*sql.Rows,
 	db := GetDBByAlias(alias)
 	var r *sql.Rows
 	var e error
-	kitgo.DebugLog.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
+	//kitgo.DebugLog.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
 	if len(args) == 0 || args == nil {
 		r, e = db.Query(sqlStr)
 	} else {
@@ -119,7 +119,7 @@ func QueryObjectByAlias(alias string, sqlStr string, obj interface{}, args ... i
 	db := GetDBByAlias(alias)
 	var r *sql.Rows
 	var e error
-	kitgo.DebugLog.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
+	//kitgo.DebugLog.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
 	if len(args) == 0 || args == nil {
 		r, e = db.Query(sqlStr)
 	} else {

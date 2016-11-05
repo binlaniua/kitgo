@@ -91,7 +91,7 @@ func DML(sql string, args ... interface{}) (sql.Result, error) {
 //
 //-------------------------------------
 func DMLByAlias(alias string, sql string, args ... interface{}) (sql.Result, error) {
-	kitgo.DebugLog.Printf("执行 => [ %s ] [ %v ]", sql, args)
+	//kitgo.DebugLog.Printf("执行 => [ %s ] [ %v ]", sql, args)
 	db := GetDBByAlias(alias)
 	stmt, err := db.Prepare(sql)
 	if err != nil {
