@@ -18,6 +18,7 @@ type HttpResult struct {
 	Status   int
 	Body     []byte
 	Response *http.Response
+	isRead   bool
 }
 
 //-------------------------------------
@@ -26,7 +27,7 @@ type HttpResult struct {
 //
 //-------------------------------------
 func NewHttpResult(res *http.Response, isLazy bool) *HttpResult {
-	r := &HttpResult{Status:res.StatusCode, Response:res}
+	r := &HttpResult{Status:res.StatusCode, Response:res, isRead: false}
 	if !isLazy {
 		r.readBody()
 	}
@@ -34,6 +35,10 @@ func NewHttpResult(res *http.Response, isLazy bool) *HttpResult {
 }
 
 func (hr *HttpResult) readBody() {
+	if hr.isRead {
+		return
+	}
+	hr.isRead = true
 	var reader io.ReadCloser
 	switch hr.Response.Header.Get("Content-Encoding") {
 	case "gzip":
@@ -55,6 +60,7 @@ func (hr *HttpResult) readBody() {
 //
 //-------------------------------------
 func (hr *HttpResult) ToJson(data interface{}) error {
+	hr.readBody()
 	err := json.Unmarshal(hr.Body, data)
 	return err
 }
@@ -65,6 +71,7 @@ func (hr *HttpResult) ToJson(data interface{}) error {
 //
 //-------------------------------------
 func (hr *HttpResult) ToJsonData() (*simplejson.Json, error) {
+	hr.readBody()
 	r, err := simplejson.NewJson(hr.Body)
 	if err != nil {
 		return nil, err
@@ -79,9 +86,7 @@ func (hr *HttpResult) ToJsonData() (*simplejson.Json, error) {
 //
 //-------------------------------------
 func (hr *HttpResult) ToString() string {
-	if (hr.Body == nil) {
-		hr.readBody()
-	}
+	hr.readBody()
 	return string(hr.Body)
 }
 
@@ -100,6 +105,7 @@ func (hr *HttpResult) IsSuccess() bool {
 //
 //-------------------------------------
 func (hr *HttpResult) ToQuery() (*goquery.Document, error) {
+	hr.readBody()
 	doc, err := goquery.NewDocumentFromReader(bytes.NewBuffer(hr.Body))
 	return doc, err
 }
@@ -110,6 +116,7 @@ func (hr *HttpResult) ToQuery() (*goquery.Document, error) {
 //
 //-------------------------------------
 func (hr *HttpResult) ToQuerySelect(exp string) (*goquery.Selection, error) {
+	hr.readBody()
 	doc, err := hr.ToQuery()
 	if err != nil {
 		return nil, err
@@ -123,6 +130,7 @@ func (hr *HttpResult) ToQuerySelect(exp string) (*goquery.Selection, error) {
 //
 //-------------------------------------
 func (hr *HttpResult) ToFile(filePath string) bool {
+	hr.readBody()
 	return file.WriteBytes(filePath, hr.Body)
 }
 
@@ -132,6 +140,7 @@ func (hr *HttpResult) ToFile(filePath string) bool {
 //
 //-------------------------------------
 func (hr *HttpResult) IsEmpty() bool {
+	hr.readBody()
 	return len(hr.Body) == 0
 }
 
