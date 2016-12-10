@@ -1,33 +1,31 @@
 package mail
 
 import (
-	"net/smtp"
-	"log"
-	"strings"
-	"fmt"
 	"crypto/tls"
+	"fmt"
+	"net/smtp"
+	"strings"
 )
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
-func Send(host, port, user, pass string, mime string, title, body string, tos []string) bool {
+func Send(host, port, user, pass string, mime string, title, body string, tos []string) error {
 	dest := fmt.Sprintf("%s:%s", host, port)
 	conn, err := tls.Dial("tcp", dest, &tls.Config{
-		InsecureSkipVerify:true,
+		InsecureSkipVerify: true,
 	})
 	if err != nil {
-		log.Println("发送邮件, 创建连接失败 => ", err)
-		return false
+		return err
 	}
 
 	client, err := smtp.NewClient(conn, host)
 	if err != nil {
-		log.Println("发送邮件, 创建客户端失败 => ", err)
-		return false
+		return err
 	}
+
 	defer client.Close()
 
 	if err := client.Auth(smtp.PlainAuth(
@@ -36,13 +34,11 @@ func Send(host, port, user, pass string, mime string, title, body string, tos []
 		pass,
 		host,
 	)); err != nil {
-		log.Println("发送邮件, 用户名密码错误 => ", err)
-		return false
+		return err
 	}
 
 	if err := client.Mail(user); err != nil {
-		log.Println("发送邮件, 设置发件人错误 => ", err)
-		return false
+		return err
 	}
 
 	//
@@ -60,8 +56,7 @@ func Send(host, port, user, pass string, mime string, title, body string, tos []
 	//
 	for _, to := range tos {
 		if err = client.Rcpt(to); err != nil {
-			log.Println("发送邮件, 设置收件人错误 => ", err)
-			return false
+			return err
 		}
 	}
 
@@ -69,7 +64,7 @@ func Send(host, port, user, pass string, mime string, title, body string, tos []
 	w, err := client.Data()
 	w.Write([]byte(message))
 	w.Close()
-	return true
+	return nil
 }
 
 //-------------------------------------
@@ -77,6 +72,6 @@ func Send(host, port, user, pass string, mime string, title, body string, tos []
 //
 //
 //-------------------------------------
-func SendHtml(host, port, user, pass, title, body string, tos []string) bool {
+func SendHtml(host, port, user, pass, title, body string, tos []string) error {
 	return Send(host, port, user, pass, `text/html; chartset="utf-8"`, title, body, tos)
 }
