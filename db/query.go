@@ -3,10 +3,10 @@ package db
 import (
 	"database/sql"
 	"errors"
+	"github.com/binlaniua/kitgo"
 	"log"
 	"reflect"
 	"strings"
-	"github.com/binlaniua/kitgo"
 	"time"
 )
 
@@ -14,13 +14,12 @@ var (
 	dbFieldMap = map[reflect.Type]map[string]reflect.StructField{}
 )
 
-
 //-------------------------------------
 //
 //
 //
 //-------------------------------------
-func HasData(sqlStr string, args ... interface{}) bool {
+func HasData(sqlStr string, args ...interface{}) bool {
 	return HasDataByAlias(DEFAULT_DB_NAME, sqlStr, args...)
 }
 
@@ -29,7 +28,7 @@ func HasData(sqlStr string, args ... interface{}) bool {
 //
 //
 //-------------------------------------
-func HasDataByAlias(alias string, sqlStr string, args ... interface{}) bool {
+func HasDataByAlias(alias string, sqlStr string, args ...interface{}) bool {
 	r, err := QueryMapsByAlias(alias, sqlStr, args...)
 	if err != nil {
 		log.Fatal("sql 语句出错")
@@ -46,11 +45,11 @@ func HasDataByAlias(alias string, sqlStr string, args ... interface{}) bool {
 //
 //
 //-------------------------------------
-func QueryMaps(sqlStr string, args ... interface{}) ([]*QueryResult, error) {
+func QueryMaps(sqlStr string, args ...interface{}) ([]*QueryResult, error) {
 	return QueryMapsByAlias(DEFAULT_DB_NAME, sqlStr, args...)
 }
 
-func QueryMapsByAlias(alias string, sqlStr string, args ... interface{}) ([]*QueryResult, error) {
+func QueryMapsByAlias(alias string, sqlStr string, args ...interface{}) ([]*QueryResult, error) {
 	rows, err := QueryByAlias(alias, sqlStr, args...)
 	if err != nil {
 		return nil, err
@@ -73,11 +72,11 @@ func QueryMapsByAlias(alias string, sqlStr string, args ... interface{}) ([]*Que
 //
 //
 //-------------------------------------
-func QueryMap(sql string, args ... interface{}) (*QueryResult, error) {
+func QueryMap(sql string, args ...interface{}) (*QueryResult, error) {
 	return QueryMapByAlias(DEFAULT_DB_NAME, sql, args...)
 }
 
-func QueryMapByAlias(alias string, sql string, args ... interface{}) (*QueryResult, error) {
+func QueryMapByAlias(alias string, sql string, args ...interface{}) (*QueryResult, error) {
 	r, err := QueryMapsByAlias(alias, sql, args...)
 	if err != nil {
 		return nil, err
@@ -93,7 +92,7 @@ func QueryMapByAlias(alias string, sql string, args ... interface{}) (*QueryResu
 //
 //
 //-------------------------------------
-func QueryByAlias(alias string, sqlStr string, args ... interface{}) (*sql.Rows, error) {
+func QueryByAlias(alias string, sqlStr string, args ...interface{}) (*sql.Rows, error) {
 	db := GetDBByAlias(alias)
 	var r *sql.Rows
 	var e error
@@ -106,7 +105,7 @@ func QueryByAlias(alias string, sqlStr string, args ... interface{}) (*sql.Rows,
 	return r, e
 }
 
-func Query(sqlStr string, args ... interface{}) (*sql.Rows, error) {
+func Query(sqlStr string, args ...interface{}) (*sql.Rows, error) {
 	return QueryByAlias(DEFAULT_DB_NAME, sqlStr, args...)
 }
 
@@ -115,7 +114,7 @@ func Query(sqlStr string, args ... interface{}) (*sql.Rows, error) {
 //
 //
 //-------------------------------------
-func QueryObjectByAlias(alias string, sqlStr string, obj interface{}, args ... interface{}) error {
+func QueryObjectByAlias(alias string, sqlStr string, obj interface{}, args ...interface{}) error {
 	db := GetDBByAlias(alias)
 	var r *sql.Rows
 	var e error
@@ -129,37 +128,34 @@ func QueryObjectByAlias(alias string, sqlStr string, obj interface{}, args ... i
 		return e
 	}
 	defer r.Close()
-	r.Next();
+	r.Next()
 	ov := reflect.ValueOf(obj)
 	mappingToObject(r, ov)
 	return nil
 }
 
-func QueryObject(sqlStr string, obj interface{}, args ... interface{}) error {
+func QueryObject(sqlStr string, obj interface{}, args ...interface{}) error {
 	return QueryObjectByAlias(DEFAULT_DB_NAME, sqlStr, obj, args...)
 }
 
-
-
 //-------------------------------------
 //
 //
 //
 //-------------------------------------
-func QueryList(sqlStr string, result interface{}, args ... interface{}) error {
+func QueryList(sqlStr string, result interface{}, args ...interface{}) error {
 	return QueryListByAlias(DEFAULT_DB_NAME, sqlStr, result, args...)
 }
 
-func QueryListByAlias(alias string, sqlStr string, result interface{}, args ... interface{}) error {
+func QueryListByAlias(alias string, sqlStr string, result interface{}, args ...interface{}) error {
 	db := GetDBByAlias(alias)
 	var r *sql.Rows
 	var e error
 
-
 	//
 	resultList := reflect.Indirect(reflect.ValueOf(result))
 	resultElementType := resultList.Type().Elem().Elem()
-	kitgo.DebugLog.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
+	//kitgo.DebugLog.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
 	if len(args) == 0 || args == nil {
 		r, e = db.Query(sqlStr)
 	} else {
@@ -206,7 +202,7 @@ func mappingToObject(row *sql.Rows, newValue reflect.Value) {
 		} else {
 			rowData := &RowData{col}
 			valueField := newValue.Elem().FieldByName(field.Name)
-			switch (field.Type.Kind()){
+			switch field.Type.Kind() {
 			case reflect.Int:
 				r, _ := rowData.ToInt32()
 				valueField.Set(reflect.ValueOf(r))
@@ -240,10 +236,10 @@ func mappingFieldMap(class reflect.Type) map[string]reflect.StructField {
 	} else {
 		m := map[string]reflect.StructField{}
 		numCount := class.NumField()
-		for i := 0; i < numCount; i ++ {
+		for i := 0; i < numCount; i++ {
 			field := class.Field(i)
 			dbName := strings.ToLower(field.Tag.Get("db"))
-			m[dbName] = field;
+			m[dbName] = field
 		}
 		dbFieldMap[class] = m
 		return m
