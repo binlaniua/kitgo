@@ -155,7 +155,7 @@ func QueryListByAlias(alias string, sqlStr string, result interface{}, args ...i
 	//
 	resultList := reflect.Indirect(reflect.ValueOf(result))
 	resultElementType := resultList.Type().Elem().Elem()
-	//kitgo.DebugLog.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
+	kitgo.DebugLog.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
 	if len(args) == 0 || args == nil {
 		r, e = db.Query(sqlStr)
 	} else {
