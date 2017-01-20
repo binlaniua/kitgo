@@ -268,6 +268,23 @@ func (c *HttpClient) Post(urlStr string, dataMap map[string]string) (*HttpResult
 //
 //
 //-------------------------------------
+func (c *HttpClient) Delete(urlStr string, dataMap map[string]string) (*HttpResult, error) {
+	reqParams := url.Values{}
+	if dataMap != nil {
+		for k, v := range dataMap {
+			reqParams.Add(k, v)
+		}
+	}
+	req, _ := http.NewRequest("DELETE", urlStr, strings.NewReader(reqParams.Encode()))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	return c.doRequest(req)
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
 func (c *HttpClient) PostReply(urlStr string, dataMap map[string]string, reply int) (*HttpResult, error) {
 	r, err := c.Post(urlStr, dataMap)
 	for i := 0; i < reply; i++ {
@@ -288,6 +305,18 @@ func (c *HttpClient) PostReply(urlStr string, dataMap map[string]string, reply i
 func (c *HttpClient) PostJson(urlStr string, data interface{}) (*HttpResult, error) {
 	jsonData, _ := json.Marshal(data)
 	req, _ := http.NewRequest("POST", urlStr, bytes.NewBuffer(jsonData))
+	req.Header.Add("Content-Type", "application/json;charset=utf-8")
+	return c.doRequest(req)
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func (c *HttpClient) PutJson(urlStr string, data interface{}) (*HttpResult, error) {
+	jsonData, _ := json.Marshal(data)
+	req, _ := http.NewRequest("PUT", urlStr, bytes.NewBuffer(jsonData))
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
 	return c.doRequest(req)
 }
