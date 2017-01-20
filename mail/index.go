@@ -62,6 +62,9 @@ func Send(host, port, user, pass string, mime string, title, body string, tos []
 
 	//
 	w, err := client.Data()
+	if err != nil {
+		return err
+	}
 	w.Write([]byte(message))
 	w.Close()
 	return nil
