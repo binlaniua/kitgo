@@ -3,17 +3,15 @@ package db
 import (
 	"database/sql"
 	"errors"
-	"log"
+	"github.com/binlaniua/kitgo"
 	"reflect"
 	"strings"
-	"github.com/binlaniua/kitgo"
 	"time"
 )
 
 var (
 	dbFieldMap = map[reflect.Type]map[string]reflect.StructField{}
 )
-
 
 //-------------------------------------
 //
@@ -32,7 +30,7 @@ func HasData(sqlStr string, args ... interface{}) bool {
 func HasDataByAlias(alias string, sqlStr string, args ... interface{}) bool {
 	r, err := QueryMapsByAlias(alias, sqlStr, args...)
 	if err != nil {
-		log.Fatal("sql 语句出错")
+		kitgo.ErrorLog.Printf("[ %s ] 语句出错 => [ %v ]", sqlStr, err)
 	}
 	if len(r) > 0 {
 		return true
@@ -139,8 +137,6 @@ func QueryObject(sqlStr string, obj interface{}, args ... interface{}) error {
 	return QueryObjectByAlias(DEFAULT_DB_NAME, sqlStr, obj, args...)
 }
 
-
-
 //-------------------------------------
 //
 //
@@ -154,7 +150,6 @@ func QueryListByAlias(alias string, sqlStr string, result interface{}, args ... 
 	db := GetDBByAlias(alias)
 	var r *sql.Rows
 	var e error
-
 
 	//
 	resultList := reflect.Indirect(reflect.ValueOf(result))

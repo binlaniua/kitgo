@@ -1,24 +1,29 @@
 package http
 
 import (
-	"net/http/cookiejar"
+	"bytes"
+	"compress/gzip"
+	"crypto/tls"
+	"encoding/json"
+	"errors"
+	"github.com/binlaniua/kitgo"
+	"github.com/binlaniua/kitgo/file"
+	"golang.org/x/net/proxy"
+	"io"
+	"mime/multipart"
+	"net"
 	"net/http"
+	"net/http/cookiejar"
 	"net/url"
 	"strings"
-	"encoding/json"
-	"bytes"
-	"mime/multipart"
-	"io"
-	"golang.org/x/net/proxy"
-	"net"
 	"time"
-	"log"
-	"crypto/tls"
-	"github.com/binlaniua/kitgo/file"
-	"errors"
-	"compress/gzip"
 )
 
+//-------------------------------------
+//
+// 
+//
+//-------------------------------------
 type HttpClient struct {
 	client    *http.Client
 	transport *http.Transport
@@ -26,15 +31,20 @@ type HttpClient struct {
 	option    *HttpClientOption
 }
 
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
 type HttpClientOption struct {
-	Proxy         string
-	ProxySock5    string
+	Proxy      string
+	ProxySock5 string
 
-	NoSsl         bool
-	SSLKeyPath    string
-	SSLCertPath   string
-	SSLKeyData    []byte
-	SSLCertData   []byte
+	NoSsl       bool
+	SSLKeyPath  string
+	SSLCertPath string
+	SSLKeyData  []byte
+	SSLCertData []byte
 
 	Timeout       time.Duration
 	DefaultHeader map[string]string
@@ -43,9 +53,8 @@ type HttpClientOption struct {
 	DefaultRefer  string
 	Debug         bool
 
-	IsLazy        bool
+	IsLazy bool
 }
-
 
 //-------------------------------------
 //
@@ -68,10 +77,10 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 	}
 	if o.DefaultHeader == nil {
 		o.DefaultHeader = map[string]string{
-			"Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-			"Accept-Language":"zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4",
-			"Cache-Control":"max-age=0",
-			"Connection":"keep-alive",
+			"Accept":                   "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+			"Accept-Language":          "zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4",
+			"Cache-Control":            "max-age=0",
+			"Connection":               "keep-alive",
 			"Upgrade-Insecure-Requests":"1",
 		}
 	}
@@ -80,7 +89,7 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 	if o.Proxy != "" {
 		p, _ := url.Parse(o.Proxy)
 		t := &http.Transport{
-			Proxy: http.ProxyURL(p),
+			Proxy:             http.ProxyURL(p),
 			DisableKeepAlives: true,
 		}
 		c.Transport = t
@@ -89,17 +98,17 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 		dialer, err := proxy.SOCKS5("tcp", o.ProxySock5,
 			nil,
 			&net.Dialer{
-				Timeout: o.Timeout * time.Second,
+				Timeout:   o.Timeout * time.Second,
 				KeepAlive: o.Timeout * time.Second,
 			},
 		)
 		if err != nil {
-			log.Println("sock5 连接失败 => ", err)
+			kitgo.DebugLog.Println("sock5 连接失败 => ", err)
 		}
 		t := &http.Transport{
-			Proxy: nil,
-			Dial: dialer.Dial,
-			DisableKeepAlives: true,
+			Proxy:               nil,
+			Dial:                dialer.Dial,
+			DisableKeepAlives:   true,
 			TLSHandshakeTimeout: o.Timeout * time.Second,
 		}
 		c.Transport = t

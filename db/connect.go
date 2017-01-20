@@ -3,9 +3,10 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/binlaniua/kitgo"
+	"github.com/binlaniua/kitgo/file"
+	_ "github.com/go-sql-driver/mysql"
+	"log"
 	"time"
 )
 
@@ -13,12 +14,32 @@ import (
 // 所有应用共享实例
 //
 var (
-	DBMap map[string]*sql.DB = make(map[string]*sql.DB)
+	DBMap   map[string]*sql.DB = make(map[string]*sql.DB)
+	IsDebug                    = false
 )
 
 const (
 	DEFAULT_DB_NAME = "___default"
 )
+
+type DBInfo struct {
+	Ip       string `json:"mysql.ip"`
+	Port     string `json:"mysql.port"`
+	User     string `json:"mysql.user"`
+	Password string `json:"mysql.password"`
+	DB       string `json:"mysql.db"`
+}
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func ConnectFile(filePath string) *sql.DB {
+	info := &DBInfo{}
+	file.LoadJsonFile(filePath, info)
+	return Connect(info.Ip, info.Port, info.User, info.Password, info.DB)
+}
 
 //-------------------------------------
 //
@@ -91,9 +112,11 @@ func DML(sql string, args ... interface{}) (sql.Result, error) {
 //
 //-------------------------------------
 func DMLByAlias(alias string, sql string, args ... interface{}) (sql.Result, error) {
-	//kitgo.DebugLog.Printf("执行 => [ %s ] [ %v ]", sql, args)
 	db := GetDBByAlias(alias)
 	stmt, err := db.Prepare(sql)
+	if IsDebug {
+		kitgo.DebugLog.Printf("执行 => [ %s ] [ %v ] => [ %v ]", sql, args, err)
+	}
 	if err != nil {
 		return nil, err
 	}
