@@ -3,15 +3,17 @@ package db
 import (
 	"database/sql"
 	"errors"
-	"github.com/binlaniua/kitgo"
+	"log"
 	"reflect"
 	"strings"
+	"github.com/binlaniua/kitgo"
 	"time"
 )
 
 var (
 	dbFieldMap = map[reflect.Type]map[string]reflect.StructField{}
 )
+
 
 //-------------------------------------
 //
@@ -137,6 +139,8 @@ func QueryObject(sqlStr string, obj interface{}, args ... interface{}) error {
 	return QueryObjectByAlias(DEFAULT_DB_NAME, sqlStr, obj, args...)
 }
 
+
+
 //-------------------------------------
 //
 //
@@ -150,6 +154,7 @@ func QueryListByAlias(alias string, sqlStr string, result interface{}, args ... 
 	db := GetDBByAlias(alias)
 	var r *sql.Rows
 	var e error
+
 
 	//
 	resultList := reflect.Indirect(reflect.ValueOf(result))
