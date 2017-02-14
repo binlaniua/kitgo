@@ -213,7 +213,7 @@ func mappingToObject(row *sql.Rows, newValue reflect.Value) {
 			default:
 				if field.Type.ConvertibleTo(timeType) {
 					ts := rowData.ToString()
-					t, _ := time.Parse("2006-01-02 15:04:05", ts)
+					t, _ := time.ParseInLocation("2006-01-02 15:04:05", ts, time.Local)
 					valueField.Set(reflect.ValueOf(t))
 				} else {
 					kitgo.ErrorLog.Print(field.Type.Kind(), field.Type, " 没有匹配的")
