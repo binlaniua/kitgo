@@ -30,13 +30,13 @@ func do(size int, kind int) string {
 //
 //
 //-------------------------------------
-func RandomInt(max int) int  {
+func RandomInt(max int) int {
 	return rand.Intn(max)
 }
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func RandomNum(size int) string {
@@ -61,7 +61,6 @@ func RandomUpperString(size int) string {
 	return do(size, 2)
 }
 
-
 //-------------------------------------
 //
 //
@@ -70,5 +69,3 @@ func RandomUpperString(size int) string {
 func RandomString(size int) string {
 	return do(size, 3)
 }
-
-

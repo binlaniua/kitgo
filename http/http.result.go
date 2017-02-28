@@ -1,17 +1,17 @@
 package http
 
 import (
-	"encoding/json"
-	"github.com/bitly/go-simplejson"
-	"net/http"
-	"io/ioutil"
-	"github.com/PuerkitoBio/goquery"
 	"bytes"
-	"github.com/binlaniua/kitgo/file"
-	"io"
 	"compress/gzip"
-	"log"
+	"encoding/json"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/binlaniua/kitgo"
+	"github.com/binlaniua/kitgo/file"
+	"github.com/bitly/go-simplejson"
+	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
 )
 
 type HttpResult struct {
@@ -27,7 +27,7 @@ type HttpResult struct {
 //
 //-------------------------------------
 func NewHttpResult(res *http.Response, isLazy bool) *HttpResult {
-	r := &HttpResult{Status:res.StatusCode, Response:res, isRead: false}
+	r := &HttpResult{Status: res.StatusCode, Response: res, isRead: false}
 	if !isLazy {
 		r.readBody()
 	}

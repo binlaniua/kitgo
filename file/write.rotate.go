@@ -1,12 +1,12 @@
 package file
 
 import (
-	"sync"
-	"os"
-	"github.com/robfig/cron"
 	"fmt"
-	"time"
+	"github.com/robfig/cron"
 	"log"
+	"os"
+	"sync"
+	"time"
 )
 
 //-------------------------------------
@@ -58,13 +58,13 @@ type FileRotate struct {
 //-------------------------------------
 func NewFileRotate(option *FileRotateOption) (*FileRotate, error) {
 	//
-	option.merge();
+	option.merge()
 
 	//
 	lr := &FileRotate{
-		lock:     sync.Mutex{},
+		lock:   sync.Mutex{},
 		option: option,
-		job: cron.New(),
+		job:    cron.New(),
 	}
 
 	//
@@ -75,15 +75,15 @@ func NewFileRotate(option *FileRotateOption) (*FileRotate, error) {
 	//按天
 	err := lr.job.AddFunc(option.Rotate, func() {
 		log.Print("已触发....新建文件做log")
-		err := lr.reopen();
+		err := lr.reopen()
 		if err != nil {
 			log.Fatal("重新打开文件失败 => ", err)
 		}
-	});
+	})
 	if err != nil {
 		return nil, err
 	}
-	lr.job.Start();
+	lr.job.Start()
 	return lr, nil
 
 }
@@ -103,7 +103,7 @@ func (lr *FileRotate) reopen() (err error) {
 	o := lr.option
 	fileName := time.Now().Format(o.Format)
 	filePath := fmt.Sprintf("%s/%s%s%s", o.DocPath, o.Prefix, fileName, o.Suffix)
-	lr.file, err = os.OpenFile(filePath, os.O_WRONLY | os.O_APPEND | os.O_CREATE, 0644)
+	lr.file, err = os.OpenFile(filePath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 	return
 }
 
@@ -126,6 +126,6 @@ func (lr *FileRotate) Write(b []byte) (int, error) {
 func (lr *FileRotate) Close() error {
 	lr.lock.Lock()
 	defer lr.lock.Unlock()
-	defer lr.job.Stop();
+	defer lr.job.Stop()
 	return lr.file.Close()
 }

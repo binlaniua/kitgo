@@ -2,10 +2,10 @@ package security
 
 import (
 	"crypto/sha1"
-	"io"
 	"encoding/hex"
-	"sort"
 	"fmt"
+	"io"
+	"sort"
 	"strings"
 )
 
@@ -15,8 +15,8 @@ import (
 //
 //-------------------------------------
 func SHA1(s string) []byte {
-	t := sha1.New();
-	io.WriteString(t, s);
+	t := sha1.New()
+	io.WriteString(t, s)
 	return t.Sum(nil)
 }
 
@@ -25,7 +25,7 @@ func SHA1(s string) []byte {
 //
 //
 //-------------------------------------
-func SHA1Hex(s string) string  {
+func SHA1Hex(s string) string {
 	return hex.EncodeToString(SHA1(s))
 }
 
@@ -34,7 +34,7 @@ func SHA1Hex(s string) string  {
 //
 //
 //-------------------------------------
-func SHA1Map(m map[string]string, joinStr string, other ... string) string {
+func SHA1Map(m map[string]string, joinStr string, other ...string) string {
 	//1 排序
 	kList := make([]string, 0, len(m))
 	for k, _ := range m {
@@ -52,7 +52,7 @@ func SHA1Map(m map[string]string, joinStr string, other ... string) string {
 	//3 加额外的
 	allStr := strings.Join(strList, joinStr)
 	if other != nil {
-		for _, otherItem := range other  {
+		for _, otherItem := range other {
 			allStr = allStr + otherItem
 		}
 	}

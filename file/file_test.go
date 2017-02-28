@@ -1,16 +1,16 @@
 package file
 
 import (
-	"testing"
 	"log"
+	"testing"
 	"time"
 )
 
-func Test_write_rotate(t *testing.T)  {
+func Test_write_rotate(t *testing.T) {
 	fr, err := NewFileRotate(&FileRotateOption{
 		docPath: "c:\\",
-		Prefix: "si_",
-		Suffix: "_error.log",
+		Prefix:  "si_",
+		Suffix:  "_error.log",
 		//rotate: "@every 1m",
 		//format: "2006_01_02_15_04",
 	})

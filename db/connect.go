@@ -102,7 +102,7 @@ func GetDBByAlias(alias string) *sql.DB {
 //
 //
 //-------------------------------------
-func DML(sql string, args ... interface{}) (sql.Result, error) {
+func DML(sql string, args ...interface{}) (sql.Result, error) {
 	return DMLByAlias(DEFAULT_DB_NAME, sql, args...)
 }
 
@@ -111,7 +111,7 @@ func DML(sql string, args ... interface{}) (sql.Result, error) {
 //
 //
 //-------------------------------------
-func DMLByAlias(alias string, sql string, args ... interface{}) (sql.Result, error) {
+func DMLByAlias(alias string, sql string, args ...interface{}) (sql.Result, error) {
 	db := GetDBByAlias(alias)
 	stmt, err := db.Prepare(sql)
 	if IsDebug {

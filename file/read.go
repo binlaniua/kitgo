@@ -1,11 +1,11 @@
 package file
 
 import (
-	"os"
-	"io/ioutil"
 	"bufio"
-	"io"
 	"encoding/json"
+	"io"
+	"io/ioutil"
+	"os"
 )
 
 //-------------------------------------
@@ -59,7 +59,7 @@ func ReadLines(filePath string) ([]string, error) {
 //
 //
 //-------------------------------------
-func ReadLinesExt(filePath string, fn func(string, int64) bool) (error) {
+func ReadLinesExt(filePath string, fn func(string, int64) bool) error {
 	f, err := os.Open(filePath)
 	if err != nil {
 		return err
@@ -68,14 +68,14 @@ func ReadLinesExt(filePath string, fn func(string, int64) bool) (error) {
 	rd := bufio.NewReader(f)
 	row := 0
 	for {
-		row ++
+		row++
 		line, err := rd.ReadString('\n')
 		if err != nil && io.EOF == err {
 			return nil
 		} else if err != nil {
 			return err
 		}
-		line = line[:len(line) - 1]
+		line = line[:len(line)-1]
 		r := fn(line, int64(row))
 		if !r {
 			break
@@ -117,7 +117,7 @@ func LoadJsonFile(filePath string, obj interface{}) error {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func LoadJsonFileToMap(filePath string) (map[string]interface{}, error) {

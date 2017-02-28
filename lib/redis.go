@@ -7,7 +7,7 @@ import "github.com/garyburd/redigo/redis"
 // redis 订阅消息
 //
 //-------------------------------------
-func RedisSub(redisConn redis.Conn, channel string, handle func(err error, channel string, msg string)) *redis.PubSubConn  {
+func RedisSub(redisConn redis.Conn, channel string, handle func(err error, channel string, msg string)) *redis.PubSubConn {
 	src := &redis.PubSubConn{redisConn}
 	src.Subscribe(channel)
 	defer src.Close()

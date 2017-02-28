@@ -1,15 +1,14 @@
 package date
 
 import (
-	"time"
 	"fmt"
 	"strconv"
+	"time"
 )
-
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func DateToString() string {
@@ -25,7 +24,6 @@ func DateToStringByJoin(join string) string {
 	n := time.Now()
 	return n.Format(fmt.Sprintf("2006%s01%s02", join, join))
 }
-
 
 //-------------------------------------
 //
@@ -78,7 +76,7 @@ func TimeToStringByJoin(join string) string {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func TimeStamp() string {

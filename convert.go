@@ -1,9 +1,9 @@
 package kitgo
 
 import (
-	"strconv"
 	"github.com/axgle/mahonia"
 	"math"
+	"strconv"
 )
 
 var (
@@ -35,7 +35,7 @@ func ConvertUnicode(src string) (string, bool) {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func ConvertToInt(src string) (int, bool) {
@@ -60,7 +60,6 @@ func ConvertMustInt(src string) int {
 	r, _ := ConvertToInt(src)
 	return r
 }
-
 
 //-------------------------------------
 //
@@ -89,7 +88,6 @@ func ConvertMustFloat(src string) float64 {
 //-------------------------------------
 func ToFixed(src float64, n int) float64 {
 	o := math.Pow(10, float64(n))
-	r := float64(int(src * o)) / o
+	r := float64(int(src*o)) / o
 	return r
 }
-

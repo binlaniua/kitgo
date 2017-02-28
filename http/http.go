@@ -1,13 +1,13 @@
 package http
 
 import (
+	"bytes"
+	"encoding/json"
+	"github.com/binlaniua/kitgo"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"net/url"
-	"encoding/json"
-	"bytes"
-	"mime/multipart"
-	"io"
-	"github.com/binlaniua/kitgo"
 )
 
 //
@@ -23,7 +23,6 @@ func HttpGet(urlStr string) *HttpResult {
 	}
 	return NewHttpResult(resp, false)
 }
-
 
 //
 //
@@ -43,7 +42,6 @@ func HttpGetReply(urlStr string, times int) *HttpResult {
 	}
 	return NewHttpResult(resp, false)
 }
-
 
 //
 //
@@ -70,7 +68,7 @@ func HttpPostFrom(urlStr string, dataMap map[string]string) *HttpResult {
 //
 //
 //-------------------------------------
-func HttpPost(urlStr string, body string) *HttpResult  {
+func HttpPost(urlStr string, body string) *HttpResult {
 	resp, err := http.Post(urlStr, "application/x-www-form-urlencoded", bytes.NewBuffer([]byte(body)))
 	if err != nil {
 		kitgo.Log(urlStr, " => ", err)

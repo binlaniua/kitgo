@@ -2,10 +2,9 @@ package db
 
 import (
 	"database/sql"
-	"strconv"
 	"encoding/json"
+	"strconv"
 )
-
 
 //-------------------------------------
 //
@@ -47,13 +46,12 @@ type QueryResult struct {
 	dataMap map[string]*RowData
 }
 
-
 func (r *QueryResult) String() string {
 	if r.dataMap != nil {
 		j, _ := json.Marshal(r.dataMap)
 		return string(j)
 	}
-	return  "{}"
+	return "{}"
 }
 
 func (r *QueryResult) ConvertTo(target interface{}) bool {

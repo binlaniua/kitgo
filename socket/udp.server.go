@@ -1,8 +1,8 @@
 package socket
 
 import (
-	"net"
 	"github.com/binlaniua/kitgo"
+	"net"
 )
 
 //-------------------------------------
@@ -23,11 +23,11 @@ func NewUdpServer(addressString string) *UdpServer {
 	server := &UdpServer{}
 	address, err := net.ResolveUDPAddr("udp4", addressString)
 	if err != nil {
-		kitgo.ErrorLog.Fatalln(address, "启动失败 => ", err);
+		kitgo.ErrorLog.Fatalln(address, "启动失败 => ", err)
 	}
 	server.server, err = net.ListenUDP("udp4", address)
 	if err != nil {
-		kitgo.ErrorLog.Fatalln(address, "启动失败 => ", err);
+		kitgo.ErrorLog.Fatalln(address, "启动失败 => ", err)
 	}
 	return server
 }

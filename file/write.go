@@ -1,8 +1,8 @@
 package file
 
 import (
-	"os"
 	"github.com/binlaniua/kitgo"
+	"os"
 )
 
 //-------------------------------------
@@ -11,7 +11,7 @@ import (
 //
 //-------------------------------------
 func WriteString(filePath string, src string) bool {
-	file, err := os.OpenFile(filePath, os.O_CREATE | os.O_RDWR, 0666)
+	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		kitgo.Log(filePath, "创建文件失败,", err)
 		return false
@@ -30,7 +30,7 @@ func WriteString(filePath string, src string) bool {
 //
 //-------------------------------------
 func WriteBytes(filePath string, data []byte) bool {
-	file, err := os.OpenFile(filePath, os.O_CREATE | os.O_RDWR, 0666)
+	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		kitgo.Log(filePath, "创建文件失败,", err)
 		return false

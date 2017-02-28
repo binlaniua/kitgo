@@ -1,8 +1,8 @@
 package zip
 
 import (
-	"io/ioutil"
 	"archive/zip"
+	"io/ioutil"
 	"os"
 )
 

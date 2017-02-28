@@ -3,11 +3,10 @@ package security
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 	"sort"
 	"strings"
-	"fmt"
 )
-
 
 //-------------------------------------
 //
@@ -27,7 +26,7 @@ func MD5(s string) string {
 //-------------------------------------
 func MD5WithSalt(s string, salt string) string {
 	salt = MD5(salt)
-	return MD5(s + salt);
+	return MD5(s + salt)
 }
 
 //-------------------------------------
@@ -35,7 +34,7 @@ func MD5WithSalt(s string, salt string) string {
 // 有序MD5加密
 //
 //-------------------------------------
-func MD5MapExt(m map[string]string, keyValJon string, joinStr string, other ... string) string {
+func MD5MapExt(m map[string]string, keyValJon string, joinStr string, other ...string) string {
 	//1 排序
 	kList := make([]string, 0, len(m))
 	for k := range m {
@@ -50,7 +49,6 @@ func MD5MapExt(m map[string]string, keyValJon string, joinStr string, other ... 
 		strList = append(strList, v)
 	}
 
-
 	//3 加额外的
 	allStr := strings.Join(strList, joinStr)
 	if other != nil {
@@ -64,7 +62,6 @@ func MD5MapExt(m map[string]string, keyValJon string, joinStr string, other ... 
 	return r
 }
 
-func MD5Map(m map[string]string, joinStr string, other ... string) string {
+func MD5Map(m map[string]string, joinStr string, other ...string) string {
 	return MD5MapExt(m, "=", joinStr, other...)
 }
-

@@ -21,7 +21,7 @@ import (
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 type HttpClient struct {
@@ -67,7 +67,7 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 	j, _ := cookiejar.New(&cookiejar.Options{})
 	hc.cookie = j
 	c := &http.Client{
-		Jar:j,
+		Jar: j,
 	}
 	hc.client = c
 
@@ -77,11 +77,11 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 	}
 	if o.DefaultHeader == nil {
 		o.DefaultHeader = map[string]string{
-			"Accept":                   "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-			"Accept-Language":          "zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4",
-			"Cache-Control":            "max-age=0",
-			"Connection":               "keep-alive",
-			"Upgrade-Insecure-Requests":"1",
+			"Accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+			"Accept-Language":           "zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4",
+			"Cache-Control":             "max-age=0",
+			"Connection":                "keep-alive",
+			"Upgrade-Insecure-Requests": "1",
 		}
 	}
 
@@ -184,7 +184,7 @@ func (c *HttpClient) SetSSLData(certData, keyData []byte) error {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func (c *HttpClient) SetTimeout(to time.Duration) error {
@@ -213,7 +213,7 @@ func (c *HttpClient) NotFollowRedirect() {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func (c *HttpClient) SetCookie(mm map[string]map[string]string) {
@@ -397,7 +397,7 @@ func (c *HttpClient) PostGzip(urlString string, data string) (*HttpResult, error
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func (c *HttpClient) doRequest(req *http.Request) (*HttpResult, error) {

@@ -11,8 +11,8 @@ var (
 )
 
 func init() {
-	DebugLog = log.New(os.Stdout, "", log.Ltime | log.Ldate | log.Llongfile)
-	ErrorLog = log.New(os.Stderr, "", log.Ltime | log.Ldate | log.Llongfile)
+	DebugLog = log.New(os.Stdout, "", log.Ltime|log.Ldate|log.Llongfile)
+	ErrorLog = log.New(os.Stderr, "", log.Ltime|log.Ldate|log.Llongfile)
 }
 
 //-------------------------------------
@@ -20,7 +20,7 @@ func init() {
 //
 //
 //-------------------------------------
-func Log(args ... interface{}) {
+func Log(args ...interface{}) {
 }
 
 //-------------------------------------
@@ -28,6 +28,5 @@ func Log(args ... interface{}) {
 //
 //
 //-------------------------------------
-func LogF(f string, args ... interface{}) {
+func LogF(f string, args ...interface{}) {
 }
-

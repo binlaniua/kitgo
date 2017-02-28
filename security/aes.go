@@ -1,11 +1,10 @@
 package security
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
-	"bytes"
 )
-
 
 //-------------------------------------
 //
@@ -44,7 +43,7 @@ func AESDecrypt(key []byte, src []byte) (strDesc string, err error) {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func PKCS5Padding(ciphertext []byte, blockSize int) []byte {
@@ -55,7 +54,7 @@ func PKCS5Padding(ciphertext []byte, blockSize int) []byte {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func PKCS5UnPadding(src []byte) []byte {

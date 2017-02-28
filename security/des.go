@@ -1,12 +1,10 @@
 package security
 
 import (
-	"crypto/des"
-	"crypto/cipher"
 	"bytes"
+	"crypto/cipher"
+	"crypto/des"
 )
-
-
 
 //-------------------------------------
 //
@@ -19,7 +17,7 @@ func DesEncrypt(origData, key []byte) ([]byte, error) {
 		return nil, err
 	}
 	blockSize := block.BlockSize()
-	padding := blockSize - len(origData) % blockSize
+	padding := blockSize - len(origData)%blockSize
 	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
 	origData = append(origData, padtext...)
 	blockMode := cipher.NewCBCEncrypter(block, key)
@@ -43,7 +41,7 @@ func DesDecrypt(crypted, key []byte) ([]byte, error) {
 	// origData := crypted
 	blockMode.CryptBlocks(origData, crypted)
 	length := len(origData)
-	unpadding := int(origData[length - 1])
+	unpadding := int(origData[length-1])
 	origData = origData[:(length - unpadding)]
 	return origData, nil
 }

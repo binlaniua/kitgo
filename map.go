@@ -1,6 +1,5 @@
 package kitgo
 
-
 //-------------------------------------
 //
 //
@@ -28,7 +27,6 @@ func MapGetInt64(m map[string]interface{}, k string) int64 {
 		return -1
 	}
 }
-
 
 //-------------------------------------
 //

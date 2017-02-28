@@ -1,10 +1,10 @@
 package socket
 
 import (
-	"net"
 	"bufio"
 	"encoding/binary"
 	"io"
+	"net"
 )
 
 //-------------------------------------
@@ -47,9 +47,9 @@ func (c *TcpClient) ReadLine() (string, error) {
 // 读取对象
 //
 //-------------------------------------
-func (c *TcpClient) ReadObject(obj interface{}) (error) {
+func (c *TcpClient) ReadObject(obj interface{}) error {
 	err := binary.Read(c.conn, c.order, obj)
-	return err;
+	return err
 }
 
 //-------------------------------------
@@ -72,7 +72,7 @@ func (c *TcpClient) ReadLength(size int) ([]byte, error) {
 // 写入
 //
 //-------------------------------------
-func (c *TcpClient) Write(src string) (error) {
+func (c *TcpClient) Write(src string) error {
 	buff := []byte(src)
 	_, err := c.conn.Write(buff)
 	return err
@@ -83,7 +83,7 @@ func (c *TcpClient) Write(src string) (error) {
 // 写入一行
 //
 //-------------------------------------
-func (c *TcpClient) WriteLine(src string) (error) {
+func (c *TcpClient) WriteLine(src string) error {
 	return c.Write(src + "\n")
 }
 
@@ -95,7 +95,3 @@ func (c *TcpClient) WriteLine(src string) (error) {
 func (c *TcpClient) Close() {
 	c.conn.Close()
 }
-
-
-
-

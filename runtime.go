@@ -1,11 +1,11 @@
 package kitgo
 
 import (
-	"os/signal"
-	"syscall"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 )
 
 //-------------------------------------
@@ -48,7 +48,7 @@ func ExceptionCatch() interface{} {
 // 使用守护进程启动
 //
 //-------------------------------------
-func RunDaemon() (error) {
+func RunDaemon() error {
 	if os.Getppid() != 1 {
 		return Restart()
 	}

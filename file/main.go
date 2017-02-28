@@ -1,14 +1,12 @@
 package file
 
 import (
-	"os"
-	"path/filepath"
 	"github.com/binlaniua/kitgo"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 	"strings"
 )
-
-
 
 //-------------------------------------
 //
@@ -31,7 +29,7 @@ func RenameTo(filePath string, newName string) (string, error) {
 //
 //
 //-------------------------------------
-func PathJoin(args ... string) string {
+func PathJoin(args ...string) string {
 	s := string(os.PathSeparator)
 	return strings.Join(args, s)
 }
@@ -44,7 +42,7 @@ func PathJoin(args ... string) string {
 func PathToFileName(filePath string) string {
 	s := strings.LastIndexAny(filePath, string(os.PathSeparator))
 	if s >= 0 {
-		filePath = filePath[s + 1:]
+		filePath = filePath[s+1:]
 	}
 	e := strings.Index(filePath, ".")
 	if e >= 0 {

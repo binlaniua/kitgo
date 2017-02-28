@@ -1,9 +1,9 @@
 package kitgo
 
 import (
-	"strings"
-	"regexp"
 	"errors"
+	"regexp"
+	"strings"
 )
 
 //-------------------------------------
@@ -26,7 +26,7 @@ func StringSplitByRegexp(src string, reg string) []string {
 	pattern := regexp.MustCompile(reg)
 	indexes := pattern.FindAllStringIndex(src, -1)
 	laststart := 0
-	result := make([]string, len(indexes) + 1)
+	result := make([]string, len(indexes)+1)
 	for i, element := range indexes {
 		result[i] = src[laststart:element[0]]
 		laststart = element[1]
@@ -64,13 +64,13 @@ func StringTrim(src string) string {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func StringBetween(src string, start string, end string) (string, bool) {
 	sI := strings.Index(src, start)
 	if sI >= 0 {
-		src = src[sI + len(start):]
+		src = src[sI+len(start):]
 		eI := strings.Index(src, end)
 		if eI > 0 {
 			return src[:eI], true
@@ -86,22 +86,22 @@ func StringBetween(src string, start string, end string) (string, bool) {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func StringStartWith(src string, s string) bool {
-	return strings.Index(src, s) == 0;
+	return strings.Index(src, s) == 0
 }
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func StringAfter(src string, start string) (string, bool) {
 	sI := strings.Index(src, start)
 	if sI >= 0 {
-		return src[sI + len(start):], true
+		return src[sI+len(start):], true
 	} else {
 		return "", false
 	}
@@ -109,7 +109,7 @@ func StringAfter(src string, start string) (string, bool) {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func StringBefore(src string, start string) (string, bool) {
@@ -123,7 +123,7 @@ func StringBefore(src string, start string) (string, bool) {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func StringMatch(src string, p string, group int) (string, error) {
@@ -152,7 +152,7 @@ func StringReplace(src string, p string, r string) string {
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
 func StringLeftPad(src string, length int, pad string) string {

@@ -1,12 +1,12 @@
 package kitgo
 
 import (
-	"io"
-	"encoding/binary"
-	"math"
 	"bytes"
-	"io/ioutil"
+	"encoding/binary"
 	"errors"
+	"io"
+	"io/ioutil"
+	"math"
 )
 
 //-------------------------------------
@@ -126,7 +126,7 @@ func (rd *Reader) ReadStringByEndPoint(char byte) (string, error) {
 //
 //
 //-------------------------------------
-func (rd *Reader)ReadUInt16() (uint16, error) {
+func (rd *Reader) ReadUInt16() (uint16, error) {
 	buffer := make([]byte, 2)
 	if _, err := rd.reader.Read(buffer); err != nil {
 		return 0, err
@@ -139,7 +139,7 @@ func (rd *Reader)ReadUInt16() (uint16, error) {
 //
 //
 //-------------------------------------
-func (rd *Reader)ReadUInt32() (uint32, error) {
+func (rd *Reader) ReadUInt32() (uint32, error) {
 	buffer := make([]byte, 4)
 	if _, err := rd.reader.Read(buffer); err != nil {
 		return 0, err
@@ -152,7 +152,7 @@ func (rd *Reader)ReadUInt32() (uint32, error) {
 //
 //
 //-------------------------------------
-func (rd *Reader)ReadUInt64() (uint64, error) {
+func (rd *Reader) ReadUInt64() (uint64, error) {
 	buffer := make([]byte, 8)
 	if _, err := rd.reader.Read(buffer); err != nil {
 		return 0, err
@@ -165,28 +165,27 @@ func (rd *Reader)ReadUInt64() (uint64, error) {
 //
 //
 //-------------------------------------
-func (rd *Reader)ReadInt16() (int16, error) {
+func (rd *Reader) ReadInt16() (int16, error) {
 	r, err := rd.ReadUInt16()
 	return int16(r), err
 }
 
-
 //-------------------------------------
 //
 //
 //
 //-------------------------------------
-func (rd *Reader)ReadInt32() (int32, error) {
+func (rd *Reader) ReadInt32() (int32, error) {
 	r, err := rd.ReadUInt32()
 	return int32(r), err
 }
 
 //-------------------------------------
 //
-// 
+//
 //
 //-------------------------------------
-func (rd *Reader)ReadInt() (int, error) {
+func (rd *Reader) ReadInt() (int, error) {
 	r, err := rd.ReadInt32()
 	return int(r), err
 }
@@ -196,7 +195,7 @@ func (rd *Reader)ReadInt() (int, error) {
 //
 //
 //-------------------------------------
-func (rd *Reader)ReadInt64() (int64, error) {
+func (rd *Reader) ReadInt64() (int64, error) {
 	r, err := rd.ReadUInt64()
 	return int64(r), err
 }
@@ -206,7 +205,7 @@ func (rd *Reader)ReadInt64() (int64, error) {
 //
 //
 //-------------------------------------
-func (rd *Reader)ReadFloat32() (float32, error) {
+func (rd *Reader) ReadFloat32() (float32, error) {
 	r, err := rd.ReadUInt32()
 	if err != nil {
 		return 0, err
@@ -220,7 +219,7 @@ func (rd *Reader)ReadFloat32() (float32, error) {
 //
 //
 //-------------------------------------
-func (rd *Reader)ReadFloat64() (float64, error) {
+func (rd *Reader) ReadFloat64() (float64, error) {
 	r, err := rd.ReadUInt64()
 	if err != nil {
 		return 0, err

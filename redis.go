@@ -9,7 +9,7 @@ import (
 //
 //
 //-------------------------------------
-func RedisZrange(redisConn redis.Conn, key string, start int, end int) ([]string, error)  {
+func RedisZrange(redisConn redis.Conn, key string, start int, end int) ([]string, error) {
 	r, err := redisConn.Do("ZRANGE", key, start, end)
 	if err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func RedisZrange(redisConn redis.Conn, key string, start int, end int) ([]string
 //
 //
 //-------------------------------------
-func RedisLrange(redisConn redis.Conn, key string, start int, end int) ([]string, error)  {
+func RedisLrange(redisConn redis.Conn, key string, start int, end int) ([]string, error) {
 	r, err := redisConn.Do("LRANGE", key, start, end)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func RedisLrange(redisConn redis.Conn, key string, start int, end int) ([]string
 //
 //
 //
-func RedisLLen(rc redis.Conn, key string) (int64, error)  {
+func RedisLLen(rc redis.Conn, key string) (int64, error) {
 	r, err := rc.Do("LLEN", key)
 	if err != nil {
 		return -1, err
