@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 	"time"
+	"sync"
 )
 
 var (
@@ -228,11 +229,14 @@ func mappingToObject(row *sql.Rows, newValue reflect.Value) {
 //
 //
 //-------------------------------------
+var lock = sync.RWMutex{}
 func mappingFieldMap(class reflect.Type) map[string]reflect.StructField {
 	m, ok := dbFieldMap[class]
 	if ok {
 		return m
 	} else {
+		lock.Lock()
+		defer lock.Unlock()
 		m := map[string]reflect.StructField{}
 		numCount := class.NumField()
 		for i := 0; i < numCount; i++ {
