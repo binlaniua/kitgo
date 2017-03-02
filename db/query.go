@@ -6,8 +6,8 @@ import (
 	"github.com/binlaniua/kitgo"
 	"reflect"
 	"strings"
-	"time"
 	"sync"
+	"time"
 )
 
 var (
@@ -230,6 +230,7 @@ func mappingToObject(row *sql.Rows, newValue reflect.Value) {
 //
 //-------------------------------------
 var lock = sync.RWMutex{}
+
 func mappingFieldMap(class reflect.Type) map[string]reflect.StructField {
 	m, ok := dbFieldMap[class]
 	if ok {
