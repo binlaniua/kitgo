@@ -5,12 +5,12 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/antonholmquist/jason"
 	"github.com/binlaniua/kitgo"
 	"github.com/binlaniua/kitgo/file"
 	"github.com/bitly/go-simplejson"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -35,6 +35,11 @@ func NewHttpResult(res *http.Response, isLazy bool) *HttpResult {
 	return r
 }
 
+//
+//
+//
+//
+//
 func (hr *HttpResult) readBody() {
 	if hr.isRead {
 		return
@@ -50,7 +55,8 @@ func (hr *HttpResult) readBody() {
 	defer reader.Close()
 	byteData, err := ioutil.ReadAll(reader)
 	if err != nil {
-		log.Println(hr.GetUrl(), " => 读取内容出错, ", err)
+		kitgo.ErrorLog.Printf("[ %s ]读取内容出错 => [ %v ]", hr.GetUrl(), err)
+		return
 	}
 	hr.Body = byteData
 }
@@ -79,6 +85,17 @@ func (hr *HttpResult) ToJsonData() (*simplejson.Json, error) {
 	} else {
 		return r, nil
 	}
+}
+
+//
+//
+//
+//
+//
+func (hr *HttpResult) ToJasonData() (*jason.Object, error) {
+	hr.readBody()
+	r, err := jason.NewObjectFromBytes(hr.Body)
+	return r, err
 }
 
 //-------------------------------------
