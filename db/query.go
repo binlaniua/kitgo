@@ -95,11 +95,16 @@ func QueryByAlias(alias string, sqlStr string, args ...interface{}) (*sql.Rows, 
 	db := GetDBByAlias(alias)
 	var r *sql.Rows
 	var e error
-	debugLogger.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
 	if len(args) == 0 || args == nil {
 		r, e = db.Query(sqlStr)
 	} else {
 		r, e = db.Query(sqlStr, args...)
+	}
+	if e != nil {
+		errorLogger.Printf("查询[ %s ][ %v ] => [ %v ]", sqlStr, args, e)
+		return nil, e
+	} else {
+		debugLogger.Printf("查询[ %s ] => ok", sqlStr)
 	}
 	return r, e
 }

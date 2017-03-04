@@ -20,8 +20,8 @@ func DeleteByAlias(alias string, sql string, args ...interface{}) (int64, error)
 		errorLogger.Printf("删除[ %s ][ %v ] => [ %v ]", sql, args, err)
 		return 0, err
 	} else {
-		debugLogger.Printf("删除[ %s ] => [ %v ]", sql, r)
-		id, _ := r.LastInsertId()
+		id, _ := r.RowsAffected()
+		debugLogger.Printf("删除[ %s ] => [ %v ]", sql, id)
 		return id, nil
 	}
 }
