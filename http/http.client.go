@@ -5,7 +5,6 @@ import (
 	"compress/gzip"
 	"crypto/tls"
 	"encoding/json"
-	"errors"
 	"github.com/binlaniua/kitgo"
 	"github.com/binlaniua/kitgo/file"
 	"golang.org/x/net/proxy"
@@ -25,45 +24,22 @@ import (
 //
 //-------------------------------------
 type HttpClient struct {
-	client    *http.Client
-	transport *http.Transport
-	cookie    *cookiejar.Jar
-	option    *HttpClientOption
+	client *http.Client
+	cookie *cookiejar.Jar
+	option *HttpClientOption
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
-type HttpClientOption struct {
-	Proxy      string
-	ProxySock5 string
-
-	NoSsl       bool
-	SSLKeyPath  string
-	SSLCertPath string
-	SSLKeyData  []byte
-	SSLCertData []byte
-
-	Timeout       time.Duration
-	DefaultHeader map[string]string
-	DefaultCookie map[string]map[string]string
-	UseAgent      string
-	DefaultRefer  string
-	Debug         bool
-
-	IsLazy bool
-}
-
-//-------------------------------------
 //
 //
-//
-//-------------------------------------
 func NewHttpClient(o *HttpClientOption) *HttpClient {
-	hc := &HttpClient{}
-	hc.option = o
+	hc := &HttpClient{
+		option: o,
+	}
+
+	//
 	j, _ := cookiejar.New(&cookiejar.Options{})
 	hc.cookie = j
 	c := &http.Client{
@@ -73,88 +49,102 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 
 	//
 	if o.UseAgent == "" {
-		o.UseAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36"
+		o.UseAgent = defaultUseAgent
 	}
+
+	//
 	if o.DefaultHeader == nil {
-		o.DefaultHeader = map[string]string{
-			"Accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-			"Accept-Language":           "zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4",
-			"Cache-Control":             "max-age=0",
-			"Connection":                "keep-alive",
-			"Upgrade-Insecure-Requests": "1",
-		}
+		o.DefaultHeader = defaultHeader
 	}
 
 	//
 	if o.Proxy != "" {
-		p, _ := url.Parse(o.Proxy)
-		t := &http.Transport{
-			Proxy:             http.ProxyURL(p),
-			DisableKeepAlives: true,
-		}
-		c.Transport = t
-		hc.transport = t
+		hc.SetProxy(o.Proxy)
 	} else if o.ProxySock5 != "" {
-		dialer, err := proxy.SOCKS5("tcp", o.ProxySock5,
-			nil,
-			&net.Dialer{
-				Timeout:   o.Timeout * time.Second,
-				KeepAlive: o.Timeout * time.Second,
-			},
-		)
-		if err != nil {
-			kitgo.DebugLog.Println("sock5 连接失败 => ", err)
-		}
-		t := &http.Transport{
-			Proxy:               nil,
-			Dial:                dialer.Dial,
-			DisableKeepAlives:   true,
-			TLSHandshakeTimeout: o.Timeout * time.Second,
-		}
-		c.Transport = t
-		hc.transport = t
+		hc.SetProxySock5(o.ProxySock5)
 	}
+
+	//
 	if o.DefaultCookie != nil {
 		hc.SetCookie(o.DefaultCookie)
 	}
+
+	//
 	if o.Timeout > 0 {
 		hc.SetTimeout(o.Timeout)
 	}
+
+	//
 	if o.SSLCertPath != "" && o.SSLKeyPath != "" {
 		err := hc.SetSSL(o.SSLCertPath, o.SSLKeyPath)
 		if err != nil {
 			panic(err)
 			return nil
 		}
-	} else if o.NoSsl {
-		if c.Transport != nil {
-			t := c.Transport.(*http.Transport)
-			t.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			hc.transport = t
-			c.Transport = t
-		} else {
-			tr := &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-			}
-			hc.transport = tr
-			c.Transport = tr
-		}
-	}
-	if len(o.SSLKeyData) > 0 && len(o.SSLCertData) > 0 {
+	} else if len(o.SSLKeyData) > 0 && len(o.SSLCertData) > 0 {
 		err := hc.SetSSLData(o.SSLCertData, o.SSLKeyData)
 		if err != nil {
 			panic(err)
 			return nil
 		}
 	}
+
+	//
 	return hc
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
+//
+//
+func (hc *HttpClient) SetProxy(proxy string) error {
+	p, err := url.Parse(proxy)
+	if err != nil {
+		kitgo.ErrorLog.Println("设置代理[ %s ]失败 => [ %v ]", proxy, err)
+		return err
+	}
+	t := &http.Transport{
+		Proxy:             http.ProxyURL(p),
+		DisableKeepAlives: true,
+		TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
+	}
+	hc.client.Transport = t
+	return nil
+}
+
+//
+//
+//
+//
+//
+func (hc *HttpClient) SetProxySock5(proxyString string) error {
+	dialer, err := proxy.SOCKS5("tcp", proxyString, nil,
+		&net.Dialer{
+			Timeout:   1 * time.Second,
+			KeepAlive: 1 * time.Second,
+		},
+	)
+	if err != nil {
+		kitgo.ErrorLog.Println("设置SOCK5代理[ %s ]失败 => [ %v ]", proxyString, err)
+		return err
+	}
+	t := &http.Transport{
+		Proxy:               nil,
+		Dial:                dialer.Dial,
+		DisableKeepAlives:   true,
+		TLSHandshakeTimeout: 1 * time.Second,
+		TLSClientConfig:     &tls.Config{InsecureSkipVerify: true},
+	}
+	hc.client.Transport = t
+	return nil
+}
+
+//
+//
+//
+//
+//
 func (c *HttpClient) SetSSL(certPath string, keyPath string) error {
 	cd, err := file.ReadBytes(certPath)
 	if err != nil {
@@ -167,55 +157,53 @@ func (c *HttpClient) SetSSL(certPath string, keyPath string) error {
 	return c.SetSSLData(cd, kd)
 }
 
+//
+//
+//
+//
+//
 func (c *HttpClient) SetSSLData(certData, keyData []byte) error {
-	if c.transport == nil {
-		c.transport = &http.Transport{
-			DisableKeepAlives: true,
-		}
-		c.client.Transport = c.transport
-	}
 	cert, err := tls.X509KeyPair(certData, keyData)
 	if err != nil {
 		return err
 	}
-	c.transport.TLSClientConfig = &tls.Config{Certificates: []tls.Certificate{cert}}
+	var ht *http.Transport
+	if c.client.Transport == nil {
+		ht = &http.Transport{
+		}
+	} else {
+		ht = c.client.Transport.(*http.Transport)
+	}
+	ht.TLSClientConfig = &tls.Config{Certificates: []tls.Certificate{cert}}
 	return nil
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
+//
+//
 func (c *HttpClient) SetTimeout(to time.Duration) error {
-	if c.transport == nil {
-		c.transport = &http.Transport{
-			DisableKeepAlives: true,
-		}
-		c.client.Transport = c.transport
-	}
 	c.client.Timeout = to * time.Second
 	return nil
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
-var errorNotFollowRedirect = errors.New("not follow redirect")
-
+//
+//
 func (c *HttpClient) NotFollowRedirect() {
 	c.client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-		return errorNotFollowRedirect
+		return http.ErrUseLastResponse
 	}
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
+//
+//
 func (c *HttpClient) SetCookie(mm map[string]map[string]string) {
 	for site, siteCs := range mm {
 		u, _ := url.Parse(site)
@@ -238,28 +226,11 @@ func (c *HttpClient) Get(urlStr string) (*HttpResult, error) {
 	return c.doRequest(req)
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
-func (c *HttpClient) GetReply(urlStr string, reply int) (*HttpResult, error) {
-	r, err := c.Get(urlStr)
-	for i := 0; i < reply; i++ {
-		if err == nil {
-			return r, nil
-		} else {
-			r, err = c.Get(urlStr)
-		}
-	}
-	return r, err
-}
-
-//-------------------------------------
 //
 //
-//
-//-------------------------------------
 func (c *HttpClient) Post(urlStr string, dataMap map[string]string) (*HttpResult, error) {
 	reqParams := url.Values{}
 	if dataMap != nil {
@@ -272,11 +243,11 @@ func (c *HttpClient) Post(urlStr string, dataMap map[string]string) (*HttpResult
 	return c.doRequest(req)
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
+//
+//
 func (c *HttpClient) Delete(urlStr string, dataMap map[string]string) (*HttpResult, error) {
 	reqParams := url.Values{}
 	if dataMap != nil {
@@ -289,28 +260,11 @@ func (c *HttpClient) Delete(urlStr string, dataMap map[string]string) (*HttpResu
 	return c.doRequest(req)
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
-func (c *HttpClient) PostReply(urlStr string, dataMap map[string]string, reply int) (*HttpResult, error) {
-	r, err := c.Post(urlStr, dataMap)
-	for i := 0; i < reply; i++ {
-		if err == nil {
-			return r, nil
-		} else {
-			r, err = c.Post(urlStr, dataMap)
-		}
-	}
-	return r, err
-}
-
-//-------------------------------------
 //
 //
-//
-//-------------------------------------
 func (c *HttpClient) PostJson(urlStr string, data interface{}) (*HttpResult, error) {
 	jsonData, _ := json.Marshal(data)
 	req, _ := http.NewRequest("POST", urlStr, bytes.NewBuffer(jsonData))
@@ -318,11 +272,11 @@ func (c *HttpClient) PostJson(urlStr string, data interface{}) (*HttpResult, err
 	return c.doRequest(req)
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
+//
+//
 func (c *HttpClient) PutJson(urlStr string, data interface{}) (*HttpResult, error) {
 	jsonData, _ := json.Marshal(data)
 	req, _ := http.NewRequest("PUT", urlStr, bytes.NewBuffer(jsonData))
@@ -330,33 +284,33 @@ func (c *HttpClient) PutJson(urlStr string, data interface{}) (*HttpResult, erro
 	return c.doRequest(req)
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
+//
+//
 func (c *HttpClient) PostString(urlStr string, body string) (*HttpResult, error) {
 	req, _ := http.NewRequest("POST", urlStr, bytes.NewBufferString(body))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
 	return c.doRequest(req)
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
+//
+//
 func (c *HttpClient) PostXMLString(urlStr string, src string) (*HttpResult, error) {
 	req, _ := http.NewRequest("POST", urlStr, bytes.NewBuffer([]byte(src)))
 	req.Header.Add("Content-Type", "application/xml;charset=utf-8")
 	return c.doRequest(req)
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
+//
+//
 func (c *HttpClient) PostFile(urlStr string, dataMap map[string]interface{}) (*HttpResult, error) {
 	buff := &bytes.Buffer{}
 	write := multipart.NewWriter(buff)
@@ -376,11 +330,11 @@ func (c *HttpClient) PostFile(urlStr string, dataMap map[string]interface{}) (*H
 	return c.doRequest(req)
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
+//
+//
 func (c *HttpClient) PostGzip(urlString string, data string) (*HttpResult, error) {
 	var b bytes.Buffer
 	w, _ := gzip.NewWriterLevel(&b, gzip.NoCompression)
@@ -395,11 +349,11 @@ func (c *HttpClient) PostGzip(urlString string, data string) (*HttpResult, error
 	return c.doRequest(req)
 }
 
-//-------------------------------------
 //
 //
 //
-//-------------------------------------
+//
+//
 func (c *HttpClient) doRequest(req *http.Request) (*HttpResult, error) {
 	if c.option.DefaultHeader != nil {
 		for k, v := range c.option.DefaultHeader {
@@ -409,12 +363,16 @@ func (c *HttpClient) doRequest(req *http.Request) (*HttpResult, error) {
 	if c.option.UseAgent != "" {
 		req.Header.Add("User-Agent", c.option.UseAgent)
 	}
+
+	//
 	req.Close = true
 	resp, err := c.client.Do(req)
 	if err != nil {
-		if e, ok := err.(*url.Error); ok && e.Err != errorNotFollowRedirect {
+		if _, ok := err.(*url.Error); ok {
 			return nil, err
 		}
 	}
+
+	//
 	return NewHttpResult(resp, c.option.IsLazy), nil
 }

@@ -18,7 +18,8 @@ type HttpResult struct {
 	Status   int
 	Body     []byte
 	Response *http.Response
-	isRead   bool
+
+	isRead bool
 }
 
 //-------------------------------------
