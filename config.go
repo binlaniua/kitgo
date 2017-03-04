@@ -15,18 +15,3 @@ func init() {
 	ErrorLog = log.New(os.Stderr, "", log.Ltime|log.Ldate|log.Llongfile)
 }
 
-//-------------------------------------
-//
-//
-//
-//-------------------------------------
-func Log(args ...interface{}) {
-}
-
-//-------------------------------------
-//
-//
-//
-//-------------------------------------
-func LogF(f string, args ...interface{}) {
-}

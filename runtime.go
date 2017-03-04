@@ -38,7 +38,7 @@ func RuntimePath() string {
 func ExceptionCatch() interface{} {
 	err := recover()
 	if err != nil {
-		Log("尝试恢复, 出错原因 => ", err)
+		ErrorLog.Printf("尝试恢复, 出错原因 => %v", err)
 	}
 	return err
 }
