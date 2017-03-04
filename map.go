@@ -1,6 +1,6 @@
 package kitgo
 
-import "orcaman/concurrent-map"
+import "github.com/orcaman/concurrent-map"
 
 //-------------------------------------
 //

@@ -2,7 +2,6 @@ package kitgo
 
 import (
 	"archive/zip"
-	"github.com/binlaniua/kitgo/file"
 	"io/ioutil"
 	"os"
 )
@@ -13,7 +12,7 @@ import (
 //
 //-------------------------------------
 func ZipDir(dir string, dest string) error {
-	f, err := file.ListFilePaths(dir)
+	f, err := FileListPaths(dir)
 	if err != nil {
 		return err
 	}
@@ -25,7 +24,7 @@ func ZipDir(dir string, dest string) error {
 // ZipFiles zip provide files in a zip file
 //
 //-------------------------------------
-func ZipFiles(fileNames []string, dest string) error  {
+func ZipFiles(fileNames []string, dest string) error {
 	fzip, err := os.Create(dest)
 	if err != nil {
 		return err
@@ -42,7 +41,7 @@ func ZipFiles(fileNames []string, dest string) error  {
 		if err != nil {
 			return err
 		}
-		filecontent, err := ioutil.ReadFile(dir + file.Name())
+		filecontent, err := ioutil.ReadFile(file)
 		if err != nil {
 			return err
 		}
@@ -53,4 +52,3 @@ func ZipFiles(fileNames []string, dest string) error  {
 	}
 	return nil
 }
-

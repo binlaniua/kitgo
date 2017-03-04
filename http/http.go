@@ -18,7 +18,7 @@ import (
 func HttpGet(urlStr string) *HttpResult {
 	resp, err := http.Get(urlStr)
 	if err != nil {
-		kitgo.Log(urlStr, " => ", err)
+		kitgo.ErrorLog.Printf("[ %s ]请求失败 => [ %v ]", urlStr, err)
 		return nil
 	}
 	return NewHttpResult(resp, false)
@@ -57,7 +57,7 @@ func HttpPostFrom(urlStr string, dataMap map[string]string) *HttpResult {
 	}
 	resp, err := http.PostForm(urlStr, reqParams)
 	if err != nil {
-		kitgo.Log(urlStr, " => ", err)
+		kitgo.ErrorLog.Printf("[ %s ]请求失败 => [ %v ]", urlStr, err)
 		return nil
 	}
 	return NewHttpResult(resp, false)
@@ -71,7 +71,7 @@ func HttpPostFrom(urlStr string, dataMap map[string]string) *HttpResult {
 func HttpPost(urlStr string, body string) *HttpResult {
 	resp, err := http.Post(urlStr, "application/x-www-form-urlencoded", bytes.NewBuffer([]byte(body)))
 	if err != nil {
-		kitgo.Log(urlStr, " => ", err)
+		kitgo.ErrorLog.Printf("[ %s ]请求失败 => [ %v ]", urlStr, err)
 		return nil
 	}
 	return NewHttpResult(resp, false)
@@ -86,7 +86,7 @@ func HttpPostJson(urlStr string, data interface{}) *HttpResult {
 	jsonData, _ := json.Marshal(data)
 	resp, err := http.Post(urlStr, "application/json;charset=utf-8", bytes.NewBuffer(jsonData))
 	if err != nil {
-		kitgo.Log(urlStr, " => ", err)
+		kitgo.ErrorLog.Printf("[ %s ]请求失败 => [ %v ]", urlStr, err)
 		return nil
 	}
 	return NewHttpResult(resp, false)
@@ -113,7 +113,7 @@ func HttpPostFile(urlStr string, dataMap map[string]interface{}) *HttpResult {
 	}
 	resp, err := http.Post(urlStr, write.FormDataContentType(), buff)
 	if err != nil {
-		kitgo.Log(urlStr, " => ", err)
+		kitgo.ErrorLog.Printf("[ %s ]请求失败 => [ %v ]", urlStr, err)
 		return nil
 	}
 	return NewHttpResult(resp, false)

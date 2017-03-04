@@ -2,8 +2,6 @@ package http
 
 import (
 	"time"
-	"net/url"
-	"net/http"
 )
 
 var (
