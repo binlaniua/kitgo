@@ -1,31 +1,40 @@
-package zip
+package kitgo
 
 import (
 	"archive/zip"
+	"github.com/binlaniua/kitgo/file"
 	"io/ioutil"
 	"os"
 )
 
 //-------------------------------------
 //
-//
+// ZipDir zip dir files in a zip file
 //
 //-------------------------------------
-func ZipDir(dir string, dist string) error {
-	f, err := ioutil.ReadDir(dir)
+func ZipDir(dir string, dest string) error {
+	f, err := file.ListFilePaths(dir)
 	if err != nil {
 		return err
 	}
-	fzip, err := os.Create(dist)
+	return ZipFiles(f, dest)
+}
+
+//-------------------------------------
+//
+// ZipFiles zip provide files in a zip file
+//
+//-------------------------------------
+func ZipFiles(fileNames []string, dest string) error  {
+	fzip, err := os.Create(dest)
 	if err != nil {
 		return err
 	}
-	defer fzip.Close()
 	w := zip.NewWriter(fzip)
 	defer w.Close()
-	for _, file := range f {
+	for _, file := range fileNames {
 		header := &zip.FileHeader{
-			Name:   file.Name(),
+			Name:   file,
 			Flags:  1 << 11, // 使用utf8编码
 			Method: zip.Deflate,
 		}
@@ -44,3 +53,4 @@ func ZipDir(dir string, dist string) error {
 	}
 	return nil
 }
+

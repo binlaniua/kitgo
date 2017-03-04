@@ -7,13 +7,18 @@ import (
 
 //-------------------------------------
 //
-// 文件日志
+//
 //
 //-------------------------------------
-func NewFileLog(filePath string) *log.Logger {
-	debugFile, err := os.OpenFile(filePath, os.O_CREATE|os.O_APPEND, 0x766)
-	if err != nil {
-		log.Panicf("创建日志文件失败 => [%v]", err)
-	}
-	return log.New(debugFile, "", log.Llongfile|log.Ltime|log.Ldate)
+var (
+	DebugLog *log.Logger = log.New(os.Stdout, "", log.Ltime|log.Ldate|log.Llongfile)
+	ErrorLog *log.Logger  = log.New(os.Stderr, "", log.Ltime|log.Ldate|log.Llongfile)
+)
+
+//
+//
+//
+//
+//
+func init() {
 }
