@@ -1,8 +1,10 @@
-package kitgo
+package rc
 
 import (
 	"github.com/garyburd/redigo/redis"
 )
+
+
 
 //-------------------------------------
 //

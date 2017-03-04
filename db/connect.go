@@ -22,12 +22,18 @@ const (
 	DEFAULT_DB_NAME = "___default"
 )
 
-type DBInfo struct {
-	Ip       string `json:"mysql.ip"`
-	Port     string `json:"mysql.port"`
-	User     string `json:"mysql.user"`
-	Password string `json:"mysql.password"`
-	DB       string `json:"mysql.db"`
+
+
+//-------------------------------------
+//
+//
+//
+//-------------------------------------
+func ConnectConfig(info *DataBaseConfig) *sql.DB  {
+	if info.Alias == "" {
+		info.Alias = DEFAULT_DB_NAME
+	}
+	return ConnectAsAlias(info.Alias, info.Ip, info.Port, info.User, info.Password, info.DB)
 }
 
 //-------------------------------------
@@ -36,9 +42,9 @@ type DBInfo struct {
 //
 //-------------------------------------
 func ConnectFile(filePath string) *sql.DB {
-	info := &DBInfo{}
+	info := &DataBaseConfig{}
 	file.LoadJsonFile(filePath, info)
-	return Connect(info.Ip, info.Port, info.User, info.Password, info.DB)
+	return ConnectConfig(info)
 }
 
 //-------------------------------------
