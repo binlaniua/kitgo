@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"errors"
-	"github.com/binlaniua/kitgo"
 	"reflect"
 	"strings"
 	"sync"
@@ -31,7 +30,7 @@ func HasData(sqlStr string, args ...interface{}) bool {
 func HasDataByAlias(alias string, sqlStr string, args ...interface{}) bool {
 	r, err := QueryMapsByAlias(alias, sqlStr, args...)
 	if err != nil {
-		kitgo.ErrorLog.Printf("[ %s ] 语句出错 => [ %v ]", sqlStr, err)
+		errorLogger.Printf("[ %s ] 语句出错 => [ %v ]", sqlStr, err)
 	}
 	if len(r) > 0 {
 		return true
@@ -96,7 +95,7 @@ func QueryByAlias(alias string, sqlStr string, args ...interface{}) (*sql.Rows, 
 	db := GetDBByAlias(alias)
 	var r *sql.Rows
 	var e error
-	//kitgo.DebugLog.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
+	debugLogger.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
 	if len(args) == 0 || args == nil {
 		r, e = db.Query(sqlStr)
 	} else {
@@ -118,14 +117,16 @@ func QueryObjectByAlias(alias string, sqlStr string, obj interface{}, args ...in
 	db := GetDBByAlias(alias)
 	var r *sql.Rows
 	var e error
-	//kitgo.DebugLog.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
 	if len(args) == 0 || args == nil {
 		r, e = db.Query(sqlStr)
 	} else {
 		r, e = db.Query(sqlStr, args...)
 	}
 	if e != nil {
+		errorLogger.Printf("查询[ %s ][ %v ] => [ %v ]", sqlStr, args, e)
 		return e
+	} else {
+		debugLogger.Printf("查询[ %s ] => ok", sqlStr)
 	}
 	defer r.Close()
 	r.Next()
@@ -155,7 +156,6 @@ func QueryListByAlias(alias string, sqlStr string, result interface{}, args ...i
 	//
 	resultList := reflect.Indirect(reflect.ValueOf(result))
 	resultElementType := resultList.Type().Elem().Elem()
-	kitgo.DebugLog.Printf("查询 => [ %s ] [ %v ]", sqlStr, args)
 	if len(args) == 0 || args == nil {
 		r, e = db.Query(sqlStr)
 	} else {
@@ -164,7 +164,10 @@ func QueryListByAlias(alias string, sqlStr string, result interface{}, args ...i
 
 	//
 	if e != nil {
+		errorLogger.Printf("查询[ %s ][ %v ] => [ %v ]", sqlStr, args, e)
 		return e
+	} else {
+		debugLogger.Printf("查询[ %s ] => ok", sqlStr)
 	}
 	defer r.Close()
 
@@ -217,7 +220,7 @@ func mappingToObject(row *sql.Rows, newValue reflect.Value) {
 					t, _ := time.ParseInLocation("2006-01-02 15:04:05", ts, time.Local)
 					valueField.Set(reflect.ValueOf(t))
 				} else {
-					kitgo.ErrorLog.Print(field.Type.Kind(), field.Type, " 没有匹配的")
+					errorLogger.Printf("映射[ %v ]没有匹配的 => [ %v ]", field.Type.Kind(), field.Type)
 				}
 			}
 		}

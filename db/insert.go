@@ -17,8 +17,10 @@ func Insert(sql string, args ...interface{}) (int64, error) {
 func InsertByAlias(alias string, sql string, args ...interface{}) (int64, error) {
 	r, err := DMLByAlias(alias, sql, args...)
 	if err != nil {
+		errorLogger.Printf("新增[ %s ][ %v ] => [ %v ]", sql, args, err)
 		return 0, err
 	} else {
+		debugLogger.Printf("删除[ %s ] => [ %v ]", sql, r)
 		id, _ := r.LastInsertId()
 		return id, nil
 	}

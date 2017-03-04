@@ -10,17 +10,7 @@ import (
 	"time"
 )
 
-//
-// 所有应用共享实例
-//
-var (
-	DBMap   map[string]*sql.DB = make(map[string]*sql.DB)
-	IsDebug                    = false
-)
 
-const (
-	DEFAULT_DB_NAME = "___default"
-)
 
 
 
@@ -120,9 +110,6 @@ func DML(sql string, args ...interface{}) (sql.Result, error) {
 func DMLByAlias(alias string, sql string, args ...interface{}) (sql.Result, error) {
 	db := GetDBByAlias(alias)
 	stmt, err := db.Prepare(sql)
-	if IsDebug {
-		kitgo.DebugLog.Printf("执行 => [ %s ] [ %v ] => [ %v ]", sql, args, err)
-	}
 	if err != nil {
 		return nil, err
 	}
