@@ -16,9 +16,12 @@ type concurrentMap struct {
 //
 //
 //
-func NewMap() *concurrentMap {
+func NewMap(m map[string]interface{}) *concurrentMap {
 	c := &concurrentMap{
 		m: cmap.New(),
+	}
+	if m != nil {
+		c.m.MSet(m)
 	}
 	return c
 }

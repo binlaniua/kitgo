@@ -121,8 +121,8 @@ func (hc *HttpClient) SetProxy(proxy string) error {
 func (hc *HttpClient) SetProxySock5(proxyString string) error {
 	dialer, err := proxy.SOCKS5("tcp", proxyString, nil,
 		&net.Dialer{
-			Timeout:   1 * time.Second,
-			KeepAlive: 1 * time.Second,
+			Timeout:   10 * time.Second,
+			KeepAlive: 10 * time.Second,
 		},
 	)
 	if err != nil {
@@ -133,7 +133,7 @@ func (hc *HttpClient) SetProxySock5(proxyString string) error {
 		Proxy:               nil,
 		Dial:                dialer.Dial,
 		DisableKeepAlives:   true,
-		TLSHandshakeTimeout: 1 * time.Second,
+		TLSHandshakeTimeout: 10 * time.Second,
 		TLSClientConfig:     &tls.Config{InsecureSkipVerify: true},
 	}
 	hc.client.Transport = t
@@ -175,6 +175,7 @@ func (c *HttpClient) SetSSLData(certData, keyData []byte) error {
 		ht = c.client.Transport.(*http.Transport)
 	}
 	ht.TLSClientConfig = &tls.Config{Certificates: []tls.Certificate{cert}}
+	c.client.Transport = ht
 	return nil
 }
 
