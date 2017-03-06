@@ -86,7 +86,7 @@ func RedisLRangeStrings(redisConn redis.Conn, key string, start, end int) ([]str
 		return nil, err
 	}
 	is := r.([]interface{})
-	ss := [len(is)]string{}
+	ss := make([]string, len(is))
 	for index, item := range r.([]interface{}) {
 		ss[index] = string(item.([]byte))
 	}
