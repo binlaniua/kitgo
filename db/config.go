@@ -2,8 +2,8 @@ package db
 
 import (
 	"database/sql"
-	"log"
 	"github.com/binlaniua/kitgo"
+	"log"
 )
 
 //
