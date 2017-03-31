@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 	"sync"
@@ -142,6 +143,39 @@ func QueryObjectByAlias(alias string, sqlStr string, obj interface{}, args ...in
 
 func QueryObject(sqlStr string, obj interface{}, args ...interface{}) error {
 	return QueryObjectByAlias(DEFAULT_DB_NAME, sqlStr, obj, args...)
+}
+
+//
+//
+// 分页查询
+//
+//
+func QueryPage(sqlStr string, page *Pageable, args ...interface{}) error {
+	return QueryPageByAlias(DEFAULT_DB_NAME, sqlStr, page, args...)
+}
+
+func QueryPageByAlias(alias string, sqlStr string, pageable *Pageable, args ...interface{}) error {
+	//1 先查询数量
+	countSqlStr := fmt.Sprintf("SELECT count(1) as count from (%s) t", sqlStr)
+	m, err := QueryMapByAlias(alias, countSqlStr, args...)
+	if err != nil {
+		return err
+	}
+	total := m.GetInt64("count")
+	pageable.Total = total
+
+	//2. 判断够不够
+	if pageable.Index < 0 {
+		pageable.Index = 0
+	}
+	start := int64(pageable.Index * pageable.Size)
+	end := start + int64(pageable.Size)
+	if total < start {
+		return nil
+	}
+	limitSqlStr := fmt.Sprintf("select __t.* from (%s) __t limit %d, %d", sqlStr, start, end)
+	err = QueryListByAlias(alias, limitSqlStr, pageable.Result, args...)
+	return err
 }
 
 //-------------------------------------
