@@ -169,11 +169,10 @@ func QueryPageByAlias(alias string, sqlStr string, pageable *Pageable, args ...i
 		pageable.Index = 0
 	}
 	start := int64(pageable.Index * pageable.Size)
-	end := start + int64(pageable.Size)
 	if total < start {
 		return nil
 	}
-	limitSqlStr := fmt.Sprintf("select __t.* from (%s) __t limit %d, %d", sqlStr, start, end)
+	limitSqlStr := fmt.Sprintf("select __t.* from (%s) __t limit %d, %d", sqlStr, start, pageable.Size)
 	err = QueryListByAlias(alias, limitSqlStr, pageable.Result, args...)
 	return err
 }
