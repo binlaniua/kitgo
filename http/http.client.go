@@ -74,6 +74,13 @@ func NewHttpClient(o *HttpClientOption) *HttpClient {
 		hc.SetTimeout(o.Timeout)
 	}
 
+	if o.NoSsl {
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		c.Transport = tr
+	}
+
 	//
 	if o.SSLCertPath != "" && o.SSLKeyPath != "" {
 		err := hc.SetSSL(o.SSLCertPath, o.SSLKeyPath)
