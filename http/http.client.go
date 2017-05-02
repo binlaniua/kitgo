@@ -217,7 +217,7 @@ func (c *HttpClient) SetCookie(mm map[string]map[string]string) {
 		u, _ := url.Parse(site)
 		cs := make([]*http.Cookie, 0)
 		for key, val := range siteCs {
-			c := &http.Cookie{Name: key, Value: val}
+			c := &http.Cookie{Name: key, Value: val, Secure: true}
 			cs = append(cs, c)
 		}
 		c.cookie.SetCookies(u, cs)
