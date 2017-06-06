@@ -5,9 +5,6 @@ import (
 	"compress/gzip"
 	"crypto/tls"
 	"encoding/json"
-	"github.com/binlaniua/kitgo"
-	"github.com/binlaniua/kitgo/file"
-	"golang.org/x/net/proxy"
 	"io"
 	"mime/multipart"
 	"net"
@@ -16,6 +13,10 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/binlaniua/kitgo"
+	"github.com/binlaniua/kitgo/file"
+	"golang.org/x/net/proxy"
 )
 
 //-------------------------------------
@@ -176,8 +177,7 @@ func (c *HttpClient) SetSSLData(certData, keyData []byte) error {
 	}
 	var ht *http.Transport
 	if c.client.Transport == nil {
-		ht = &http.Transport{
-		}
+		ht = &http.Transport{}
 	} else {
 		ht = c.client.Transport.(*http.Transport)
 	}
@@ -214,10 +214,13 @@ func (c *HttpClient) NotFollowRedirect() {
 //
 func (c *HttpClient) SetCookie(mm map[string]map[string]string) {
 	for site, siteCs := range mm {
-		u, _ := url.Parse(site)
+		u, err := url.Parse(site)
+		if err != nil {
+			kitgo.ErrorLog.Panicf("写入cookie失败 => [ %v ]", err)
+		}
 		cs := make([]*http.Cookie, 0)
 		for key, val := range siteCs {
-			c := &http.Cookie{Name: key, Value: val, Secure: true}
+			c := &http.Cookie{Name: key, Value: val}
 			cs = append(cs, c)
 		}
 		c.cookie.SetCookies(u, cs)
